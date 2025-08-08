@@ -24,10 +24,10 @@ public class VisualManager {
                         VisualMaker.spawnCenterParticle(client.world, particle.pos, particle.particle);
                     }
                 }
+                
+                LineDrawer.drawDebugLine();
             }
         });
-
-        LineDrawer.drawDebugLine();
     }
 
     public static void renderLineGroup(BlockPos from, BlockPos to, Direction side) {
@@ -69,7 +69,7 @@ public class VisualManager {
 
         public RulerParticle(boolean corner, BlockPos pos, ParticleEffect particle) {
             this.corner = corner;
-            this.pos = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+            this.pos = Vec3d.of(pos);
             this.particle = particle;
         }
 

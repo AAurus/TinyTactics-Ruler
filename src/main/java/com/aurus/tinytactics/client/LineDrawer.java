@@ -1,10 +1,7 @@
 package com.aurus.tinytactics.client;
 
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
@@ -20,8 +17,13 @@ public class LineDrawer {
 
         BufferBuilder buffer = tess.begin(DrawMode.LINES, VertexFormats.LINES);
 
-        buffer.vertex((float) pos1.getX(), (float) pos1.getY(), (float) pos1.getZ()).color(color);
-        buffer.vertex((float) pos2.getX(), (float) pos2.getY(), (float) pos2.getZ()).color(color);
+        Vec3d normal = pos1.negate().add(pos2).normalize();
+        float dx = (float) normal.getX();
+        float dy = (float) normal.getY();
+        float dz = (float) normal.getZ();
+
+        buffer.vertex((float) pos1.getX(), (float) pos1.getY(), (float) pos1.getZ()).color(color).normal(dx, dy, dz);
+        buffer.vertex((float) pos2.getX(), (float) pos2.getY(), (float) pos2.getZ()).color(color).normal(dx, dy, dz);
 
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
