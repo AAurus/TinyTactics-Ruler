@@ -1,31 +1,31 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "tinytactics",
 	"version": "${version}",
-	"name": "Example mod",
+	"name": "Tiny Tactics Addons",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"Me!"
+		"Aurus"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/AAurus/TinyTactics-Ruler"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/tinytactics/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"com.aurus.tinytactics"
 		],
 		"client": [
-			"com.example.ExampleModClient"
+			"com.aurus.tinytactics"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
+		"tinytactics.mixins.json",
 		{
-			"config": "modid.client.mixins.json",
+			"config": "tinytactics.client.mixins.json",
 			"environment": "client"
 		}
 	],
