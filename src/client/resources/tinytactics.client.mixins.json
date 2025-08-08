@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "com.aurus.tinytactics.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"TinyTacticsClientMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

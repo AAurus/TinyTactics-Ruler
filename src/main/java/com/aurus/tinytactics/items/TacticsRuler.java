@@ -19,20 +19,21 @@ public class TacticsRuler extends Item {
     protected static final Map<PlayerEntity, Measurement> MEASUREMENTS = new HashMap<>();
     PlayerEntity player;
 
-    public TacticsRuler(Settings settings) {
-        super(settings.maxCount(1));
+    public TacticsRuler() {
+        super(new Item.Settings().maxCount(1));
     }
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
-        
+        this.player = context.getPlayer();
+
         if (!context.getWorld().isClient()) {
             return ActionResult.PASS;
         }
 
         if (player.isSneaking()) {
-            MEASUREMENTS.remove(player);
             clearPoints();
+            MEASUREMENTS.remove(player);
             return ActionResult.SUCCESS;
         }
 
@@ -65,8 +66,8 @@ public class TacticsRuler extends Item {
             data.step++;
         } 
         else {
-            MEASUREMENTS.remove(player);
             clearPoints();
+            MEASUREMENTS.remove(player);
         }
 
         return ActionResult.SUCCESS;

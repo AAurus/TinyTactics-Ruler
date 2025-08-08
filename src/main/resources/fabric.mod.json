@@ -16,22 +16,18 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.aurus.tinytactics"
+			"com.aurus.tinytactics.TinyTactics"
 		],
 		"client": [
-			"com.aurus.tinytactics"
+			"com.aurus.tinytactics.TinyTacticsClient"
 		]
 	},
 	"mixins": [
-		"tinytactics.mixins.json",
-		{
-			"config": "tinytactics.client.mixins.json",
-			"environment": "client"
-		}
+		"tinytactics.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.8",
+		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*"
 	},

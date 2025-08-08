@@ -27,6 +27,8 @@ public class VisualManager {
                 }
             }
         });
+
+        LineDrawer.drawDebugLine();
     }
 
     public static void renderLineGroup(BlockPos from, BlockPos to, Direction side) {
@@ -79,14 +81,15 @@ public class VisualManager {
         }
 
         public boolean posEquals(BlockPos bPos) {
-            Vec3i posRounded = new Vec3i((int) Math.round(pos.x), (int) Math.round(pos.y), (int) Math.round(pos.z));
-            return bPos.equals(posRounded);
+            return (bPos.getX() == (int) Math.round(pos.x) && 
+                    bPos.getY() == (int) Math.round(pos.y) && 
+                    bPos.getZ() == (int) Math.round(pos.z));
         }
 
         public boolean posEquals(Vec3d dPos) {
-            Vec3i posRounded = new Vec3i((int) Math.round(pos.x), (int) Math.round(pos.y), (int) Math.round(pos.z));
-            Vec3i dPosRounded = new Vec3i((int) Math.round(dPos.x), (int) Math.round(dPos.y), (int) Math.round(dPos.z));
-            return dPosRounded.equals(posRounded);
+            return (Math.round(pos.x) == Math.round(dPos.x) &&
+                    Math.round(pos.y) == Math.round(dPos.y) &&
+                    Math.round(pos.z) == Math.round(dPos.z));
         }
     }
 }

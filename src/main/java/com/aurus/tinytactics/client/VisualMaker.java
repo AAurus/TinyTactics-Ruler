@@ -35,9 +35,9 @@ public class VisualMaker {
     @Environment(EnvType.CLIENT)
     public static void spawnCornerParticles(World world, Vec3d pos, ParticleEffect particle) {
         
-        long cx = Math.round(pos.getX());
-        long cy = Math.round(pos.getY());
-        long cz = Math.round(pos.getZ());
+        double cx = Math.round(pos.getX()) + 0.5;
+        double cy = Math.round(pos.getY()) + 0.5;
+        double cz = Math.round(pos.getZ()) + 0.5;
 
         spawnStaticParticle(world, particle, cx+0.5, cy+0.5, cz+0.5);
         spawnStaticParticle(world, particle, cx-0.5, cy+0.5, cz+0.5);

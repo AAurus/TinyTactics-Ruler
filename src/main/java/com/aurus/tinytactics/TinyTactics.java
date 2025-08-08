@@ -15,7 +15,7 @@ public class TinyTactics implements ModInitializer {
     @Override
     public void onInitialize() {
 
-        ItemRegistrar.register();
+        ItemRegistrar.registerAll();
 
         LOGGER.info("TinyTactics Online!");
     }
