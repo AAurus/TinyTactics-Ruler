@@ -29,52 +29,70 @@ public class TacticsRuler extends Item {
 
         if (player.isSneaking()) {
             MEASUREMENTS.remove(player);
+            clearPoints();
             return ActionResult.SUCCESS;
         }
 
         return measure(context);
-
     }
 
     @Environment(EnvType.CLIENT)
     private measure(ItemUsageContext context) {
+        
         PlayerEntity usePlayer = context.getPlayer();
-
         Measurement data = MEASUREMENTS.computeIfAbsent(usePlayer, p -> new MeasurementData());
 
-        BlockPos hitPos = context.getBlockPos();
-        Direction hitSide = context.getSide();
+        if (data.step < 2) {
+            if (!checkWorld(data, context.getWorld())) {
+                return ActionResult.FAIL;
+            }
 
-        switch(data.step) {
-            case 0:
-            case 1:
-                data.points[step] = hitPos;
-                if (!data.world) {
-                    data.world = context.getWorld();
-                } else if (data.world != context.getWorld) {
-                    // TODO: display message on player HUD
-                    return ActionResult.FAIL;
-                }
-
-                if (data.points[1]) {
-                    double dist = data.getDistance();
-                }
+            if (!data.points[step]) {
+                BlockPos pos = context.getBlockPos()
+                data.points[step] = pos;
+                VisualManager.addParticle(true, pos, ParticleTypes.END_ROD); // debug
+            }
+            
+            if (step == 1) {
+                double dist = data.getDistance();
                 // TODO: display message on player HUD
-                data.step++;
-
-            break;
-            default:
-                
-            break;
+                VisualManager.renderLineGroup(data.points[0], data.points[1], context.getSide());
+            }
+            
+            data.step++;
+        } 
+        else {
+            MEASUREMENTS.remove(player);
+            clearPoints();
         }
+
+        return ActionResult.SUCCESS;
     }
 
-    protected static double euclidDistance(BlockPos a, BlockPos b) {
-        int dx = b.getX() - a.getX();
-        int dy = b.getY() - a.getY();
-        int dz = b.getZ() - a.getZ();
+    private boolean checkWorld(Measurement data, World world) {
+        
+        if (!data.world) {
+            data.world = world;
+        }
+        else if (data.world != world) {
+            // TODO: display message on player HUD
+            return false;
+        }
 
-        return Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2) + Math.pow(dz,2));
+        return true;
+    }
+
+    protected void clearPoints() {
+        
+        if (!this.player) {
+            return;
+        }
+
+        Measurement data = MEASUREMENTS.get(player);
+        if (data) {
+            VisualManager.removeParticle(data.points[0]);
+            VisualManager.removeParticle(data.points[1]);
+        }
     }
 
     protected static class Measurement {
@@ -85,13 +103,23 @@ public class TacticsRuler extends Item {
             points[0] = null; //from
             points[1] = null; //to
         }
+        
+        protected static double euclidDistance(BlockPos a, BlockPos b) {
+            
+            int dx = b.getX() - a.getX();
+            int dy = b.getY() - a.getY();
+            int dz = b.getZ() - a.getZ();
+
+            return Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2) + Math.pow(dz,2));
+        }
 
         public getDistance {
+            
             if (points[0] && points[1]) {
                 return euclidDistance(points[0], points[1]);
             }
+
             return 0;
         }
     }
-
 }
