@@ -4,12 +4,18 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.client.render.BufferBuilderStorage;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.joml.Matrix4f;
 
 public class VisualManager {
     private static final List<RulerParticle> particles = new ArrayList<>();
@@ -28,6 +34,11 @@ public class VisualManager {
             }
         });
     }
+
+    public static void renderLines(DimensionType dimension, MatrixStack matrices, BufferBuilderStorage bufferBuilders,
+            Camera camera, Matrix4f projection) {
+        // TODO Auto-generated method stub
+    } 
 
     public static void renderLineGroup(BlockPos from, BlockPos to, Direction side) {
         //todo
