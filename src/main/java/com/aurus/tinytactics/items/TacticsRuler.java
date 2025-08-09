@@ -4,35 +4,39 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.aurus.tinytactics.client.VisualManager;
+import com.aurus.tinytactics.components.BlockPosList;
+import com.aurus.tinytactics.registry.DataRegistrar;
 
 public class TacticsRuler extends Item {
     protected static final Map<PlayerEntity, Measurement> MEASUREMENTS = new HashMap<>();
     PlayerEntity player;
 
-    public TacticsRuler(Settings settings) {
-        super(settings.maxCount(1));
+    public TacticsRuler() {
+        super(new Item.Settings().maxCount(1).component(DataRegistrar.RULER_POSITIONS, new BlockPosList(new ArrayList<>())));
     }
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
-        
         if (!context.getWorld().isClient()) {
             return ActionResult.PASS;
         }
 
+        this.player = context.getPlayer();
+        ItemStack stack = context.getStack();
+
         if (player.isSneaking()) {
+            clearPoints(stack);
             MEASUREMENTS.remove(player);
-            clearPoints();
             return ActionResult.SUCCESS;
         }
 
@@ -43,6 +47,7 @@ public class TacticsRuler extends Item {
     private ActionResult measure(ItemUsageContext context) {
         
         PlayerEntity usePlayer = context.getPlayer();
+        ItemStack stack = context.getStack();
         Measurement data = MEASUREMENTS.computeIfAbsent(usePlayer, p -> new Measurement());
 
         if (data.step < 2) {
@@ -53,20 +58,21 @@ public class TacticsRuler extends Item {
             if (data.points[data.step] == null) {
                 BlockPos pos = context.getBlockPos();
                 data.points[data.step] = pos;
-                VisualManager.addParticle(true, pos, ParticleTypes.END_ROD); // debug
+                BlockPosList positions = stack.getOrDefault(DataRegistrar.RULER_POSITIONS, new BlockPosList(new ArrayList<>()));
+                stack.set(DataRegistrar.RULER_POSITIONS, positions.add(pos));
             }
             
             if (data.step == 1) {
                 // double dist = data.getDistance();
                 // TODO: display message on player HUD
-                VisualManager.renderLineGroup(data.points[0], data.points[1], context.getSide());
+                // VisualManager.renderLineGroup(data.points[0], data.points[1], context.getSide());
             }
             
             data.step++;
         } 
         else {
+            clearPoints(stack);
             MEASUREMENTS.remove(player);
-            clearPoints();
         }
 
         return ActionResult.SUCCESS;
@@ -85,7 +91,7 @@ public class TacticsRuler extends Item {
         return true;
     }
 
-    protected void clearPoints() {
+    protected void clearPoints(ItemStack stack) {
         
         if (this.player == null) {
             return;
@@ -93,8 +99,7 @@ public class TacticsRuler extends Item {
 
         Measurement data = MEASUREMENTS.get(player);
         if (data != null) {
-            VisualManager.removeParticle(data.points[0]);
-            VisualManager.removeParticle(data.points[1]);
+            stack.set(DataRegistrar.RULER_POSITIONS, new BlockPosList(new ArrayList<>()));
         }
     }
 
