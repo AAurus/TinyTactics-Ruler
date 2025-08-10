@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.aurus.tinytactics"
+			"com.aurus.tinytactics.TinyTactics"
 		],
 		"client": [
-			"com.aurus.tinytactics"
+			"com.aurus.tinytactics.TinyTacticsClient"
 		]
 	},
 	"mixins": [

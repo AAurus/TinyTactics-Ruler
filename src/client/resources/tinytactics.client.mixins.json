@@ -3,8 +3,7 @@
 	"package": "com.aurus.tinytactics.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"TinyTacticsClientMixin",
-		"WorldRendererMixin"
+		"TinyTacticsClientMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

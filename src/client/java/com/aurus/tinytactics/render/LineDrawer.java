@@ -21,19 +21,21 @@ public class LineDrawer {
 
         Camera camera = context.camera();
         MatrixStack matrices = Objects.requireNonNull(context.matrixStack());
-        RenderManager.transformToWorldSpace(matrices, camera);
+        //RenderManager.transformToWorldSpace(matrices, camera);
+
+        MatrixStack.Entry matrix = matrices.peek();
 
         final Tessellator tess = Tessellator.getInstance();
 
-        BufferBuilder buffer = tess.begin(DrawMode.LINES, VertexFormats.LINES);
+        BufferBuilder buffer = tess.begin(DrawMode.DEBUG_LINES, VertexFormats.LINES);
 
-        Vec3d normal = pos1.subtract(pos2).normalize();
+        Vec3d normal = pos2.subtract(pos1).normalize();
         float dx = (float) normal.getX();
         float dy = (float) normal.getY();
         float dz = (float) normal.getZ();
 
-        buffer.vertex(matrices.peek(), (float) pos1.getX(), (float) pos1.getY(), (float) pos1.getZ()).color(color).normal(dx, dy, dz);
-        buffer.vertex(matrices.peek(), (float) pos2.getX(), (float) pos2.getY(), (float) pos2.getZ()).color(color).normal(dx, dy, dz);
+        buffer.vertex(matrix.getPositionMatrix(), (float) pos1.getX(), (float) pos1.getY(), (float) pos1.getZ()).color(color).normal(matrix, dx, dy, dz);
+        buffer.vertex(matrix.getPositionMatrix(), (float) pos2.getX(), (float) pos2.getY(), (float) pos2.getZ()).color(color).normal(matrix, dx, dy, dz);
 
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
