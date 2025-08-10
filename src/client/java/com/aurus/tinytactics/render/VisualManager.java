@@ -1,7 +1,7 @@
 package com.aurus.tinytactics.render;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.client.render.BufferBuilderStorage;
@@ -33,16 +33,16 @@ public class VisualManager {
                 }
             }
         });
+
+        WorldRenderEvents.AFTER_ENTITIES.register(context -> {
+            LineDrawer.drawDebugLine(context);
+        });
     }
 
     public static void renderLines(DimensionType dimension, MatrixStack matrices, BufferBuilderStorage bufferBuilders,
             Camera camera, Matrix4f projection) {
-        // TODO Auto-generated method stub
-    } 
-
-    public static void renderLineGroup(BlockPos from, BlockPos to, Direction side) {
         //todo
-    }
+    } 
 
     public static void addParticle(boolean corner, BlockPos pos, ParticleEffect particle) {
         particles.add(new RulerParticle(corner, pos, particle));

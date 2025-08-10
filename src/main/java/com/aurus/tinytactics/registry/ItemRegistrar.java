@@ -1,7 +1,5 @@
 package com.aurus.tinytactics.registry;
 
-import java.util.function.Function;
-
 import com.aurus.tinytactics.TinyTactics;
 import com.aurus.tinytactics.items.TacticsRuler;
 
