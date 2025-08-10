@@ -21,10 +21,11 @@ public class LineDrawer {
 
         Camera camera = context.camera();
         MatrixStack matrices = Objects.requireNonNull(context.matrixStack());
-        //RenderManager.transformToWorldSpace(matrices, camera);
+        RenderManager.transformToWorldSpace(matrices, camera);
 
         MatrixStack.Entry matrix = matrices.peek();
 
+        matrices.push();
         final Tessellator tess = Tessellator.getInstance();
 
         BufferBuilder buffer = tess.begin(DrawMode.DEBUG_LINES, VertexFormats.LINES);
@@ -39,11 +40,13 @@ public class LineDrawer {
 
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.lineWidth(2);
 
         BufferRenderer.drawWithGlobalProgram(buffer.end());
+        matrices.pop();
     }
 
     public static void drawDebugLine(WorldRenderContext context) {
-        renderLine(context, new Vec3d(0, 0, 0), new Vec3d(0, 40, 0), 0xFF0000FF);
+        renderLine(context, new Vec3d(0.5, 0.5, 0.5), new Vec3d(0.5, 40.5, 0.5), 0xFF0000FF);
     }
 }
