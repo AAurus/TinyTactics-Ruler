@@ -87,10 +87,6 @@ public class LineDrawer {
         Vec3d diff = pos2.subtract(pos1);
         Vec3d norm = diff.normalize();
 
-        // norm.x * x + norm.y * y - norm.z * z = 0
-        // norm.x * x + norm.y * y = 0 -> x = -norm.y * y / norm.x
-        // norm.y * y - norm.z * z = 0 -> z = norm.y * y / norm.z
-
         Vec3d normXY = new Vec3d(-norm.getY(), norm.getX(), 0).normalize();
         Vec3d normYZ = new Vec3d(0, -norm.getZ(), norm.getY()).normalize();
         
