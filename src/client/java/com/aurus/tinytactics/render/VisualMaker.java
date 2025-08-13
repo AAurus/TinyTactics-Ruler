@@ -1,4 +1,4 @@
-package com.aurus.tinytactics.client;
+package com.aurus.tinytactics.render;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

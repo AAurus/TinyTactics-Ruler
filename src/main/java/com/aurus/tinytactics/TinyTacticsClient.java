@@ -1,6 +1,6 @@
 package com.aurus.tinytactics;
 
-import com.aurus.tinytactics.client.VisualManager;
+import com.aurus.tinytactics.render.VisualManager;
 
 import net.fabricmc.api.ClientModInitializer;
 

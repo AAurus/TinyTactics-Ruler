@@ -13,8 +13,6 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.aurus.tinytactics.client.VisualManager;
-
 public class TacticsRuler extends Item {
     protected static final Map<PlayerEntity, Measurement> MEASUREMENTS = new HashMap<>();
     PlayerEntity player;

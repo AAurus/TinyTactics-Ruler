@@ -1,14 +1,20 @@
-package com.aurus.tinytactics.client;
+package com.aurus.tinytactics.render;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.render.BufferBuilderStorage;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.joml.Matrix4f;
 
 public class VisualManager {
     private static final List<RulerParticle> particles = new ArrayList<>();
@@ -24,15 +30,18 @@ public class VisualManager {
                         VisualMaker.spawnCenterParticle(client.world, particle.pos, particle.particle);
                     }
                 }
-                
-                LineDrawer.drawDebugLine();
             }
+        });
+
+        WorldRenderEvents.AFTER_ENTITIES.register(context -> {
+            LineDrawer.drawDebugLine(context);
         });
     }
 
-    public static void renderLineGroup(BlockPos from, BlockPos to, Direction side) {
+    public static void renderLines(DimensionType dimension, MatrixStack matrices, BufferBuilderStorage bufferBuilders,
+            Camera camera, Matrix4f projection) {
         //todo
-    }
+    } 
 
     public static void addParticle(boolean corner, BlockPos pos, ParticleEffect particle) {
         particles.add(new RulerParticle(corner, pos, particle));
@@ -69,7 +78,7 @@ public class VisualManager {
 
         public RulerParticle(boolean corner, BlockPos pos, ParticleEffect particle) {
             this.corner = corner;
-            this.pos = Vec3d.of(pos);
+            this.pos = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
             this.particle = particle;
         }
 
@@ -80,15 +89,14 @@ public class VisualManager {
         }
 
         public boolean posEquals(BlockPos bPos) {
-            return (bPos.getX() == (int) Math.round(pos.x) && 
-                    bPos.getY() == (int) Math.round(pos.y) && 
-                    bPos.getZ() == (int) Math.round(pos.z));
+            Vec3i posRounded = new Vec3i((int) Math.round(pos.x), (int) Math.round(pos.y), (int) Math.round(pos.z));
+            return bPos.equals(posRounded);
         }
 
         public boolean posEquals(Vec3d dPos) {
-            return (Math.round(pos.x) == Math.round(dPos.x) &&
-                    Math.round(pos.y) == Math.round(dPos.y) &&
-                    Math.round(pos.z) == Math.round(dPos.z));
+            Vec3i posRounded = new Vec3i((int) Math.round(pos.x), (int) Math.round(pos.y), (int) Math.round(pos.z));
+            Vec3i dPosRounded = new Vec3i((int) Math.round(dPos.x), (int) Math.round(dPos.y), (int) Math.round(dPos.z));
+            return dPosRounded.equals(posRounded);
         }
     }
 }
