@@ -1,14 +1,14 @@
 package com.aurus.tinytactics.render;
 
-import org.joml.Quaternionf;
-
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Vec3d;
 
 public class RenderManager {
     
-    public static void transformToWorldSpace(MatrixStack matrices, Camera camera) {
-        matrices.multiply(camera.getRotation().conjugate(new Quaternionf()));
-        matrices.translate(-camera.getPos().x, -camera.getPos().y, -camera.getPos().z);
+    public static Vec3d transformToCameraSpace(Vec3d pos, Camera camera) {
+        //Vec3d tempT = pos.add(camera.getPos());
+        //Vector3d tempTR = camera.getRotation().transform(new Vector3d(tempT.getX(), tempT.getY(), tempT.getZ()));
+        //return new Vec3d(tempTR.x(), tempTR.y(), tempTR.z());
+        return pos.subtract(camera.getPos());
     }
 }

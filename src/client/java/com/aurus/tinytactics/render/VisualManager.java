@@ -33,7 +33,7 @@ public class VisualManager {
             }
         });
 
-        WorldRenderEvents.END.register(context -> {
+        WorldRenderEvents.AFTER_ENTITIES.register(context -> {
             LineDrawer.drawDebugLine(context);
         });
     }
