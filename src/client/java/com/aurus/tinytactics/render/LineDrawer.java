@@ -51,7 +51,7 @@ public class LineDrawer {
         matrices.pop();
     }
 
-    public static void renderTriCrossLine(WorldRenderContext context, Vec3d pos1, Vec3d pos2, int color) {
+    public static void renderQuadCrossLine(WorldRenderContext context, Vec3d pos1, Vec3d pos2, int color) {
         Camera camera = context.camera();
         MatrixStack matrices = Objects.requireNonNull(context.matrixStack());
 
@@ -62,7 +62,7 @@ public class LineDrawer {
 
         matrices.translate(-camera.getPos().x, -camera.getPos().y, -camera.getPos().z);
 
-        List<Vec3d> vecs = createTriCross(pos1, pos2, 0.05);
+        List<Vec3d> vecs = createQuadCross(pos1, pos2, 0.05);
         for (Vec3d vec : vecs) {
             //Vec3d camVec = RenderManager.transformToCameraSpace(vec, camera);
             buffer.vertex(matrices.peek(), (float) vec.getX(), (float) vec.getY(), (float) vec.getZ()).color(color);
@@ -81,7 +81,7 @@ public class LineDrawer {
         matrices.pop();
     }
 
-    public static List<Vec3d> createTriCross(Vec3d pos1, Vec3d pos2, double lineWidth) {
+    public static List<Vec3d> createQuadCross(Vec3d pos1, Vec3d pos2, double lineWidth) {
         List<Vec3d> result = new ArrayList<>();
         
         Vec3d diff = pos2.subtract(pos1);
@@ -110,6 +110,6 @@ public class LineDrawer {
     }
 
     public static void drawDebugLine(WorldRenderContext context) {
-        renderTriCrossLine(context, new Vec3d(0.5, 0.5, 0.5), new Vec3d(0.5, 40.5, 40.5), 0xFF0000FF);
+        renderQuadCrossLine(context, new Vec3d(0.5, 0.5, 0.5), new Vec3d(0.5, 40.5, 40.5), 0xFF0000FF);
     }
 }
