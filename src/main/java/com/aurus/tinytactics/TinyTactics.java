@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.aurus.tinytactics.registry.DataRegistrar;
 import com.aurus.tinytactics.registry.ItemRegistrar;
 
 public class TinyTactics implements ModInitializer {
@@ -16,6 +17,7 @@ public class TinyTactics implements ModInitializer {
     public void onInitialize() {
 
         ItemRegistrar.registerAll();
+        DataRegistrar.registerAll();
 
         LOGGER.info("TinyTactics Online!");
     }

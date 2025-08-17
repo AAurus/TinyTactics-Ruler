@@ -1,27 +1,30 @@
 package com.aurus.tinytactics;
 
-import org.joml.Matrix4f;
-
-import com.aurus.tinytactics.render.VisualManager;
+import com.aurus.tinytactics.components.BlockPosMap;
+import com.aurus.tinytactics.components.BlockPosMapPayload;
+import com.aurus.tinytactics.render.RenderManager;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.client.render.BufferBuilderStorage;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.client.MinecraftClient;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.world.ClientWorld;
 
 public class TinyTacticsClient implements ClientModInitializer {
-    @Override
+	
+	@Override
 	public void onInitializeClient() {
-		VisualManager.init();
+		RenderManager.getManager().init();
+
+		ClientPlayNetworking.registerGlobalReceiver(BlockPosMapPayload.ID, TinyTacticsClient::receiveRulerMapPacket);
 	}
 
-	public static void renderOverlay(MatrixStack matrices, BufferBuilderStorage bufferBuilders, Camera camera, Matrix4f projection) {
-        final MinecraftClient clientInstance = MinecraftClient.getInstance();
-		if (clientInstance.player != null) {
-			final DimensionType dimension = clientInstance.player.getWorld().getDimension();
-			VisualManager.renderLines(dimension, matrices, bufferBuilders, camera, projection);
+	public static void receiveRulerMapPacket(BlockPosMapPayload payload, ClientPlayNetworking.Context context) {
+		ClientWorld world = context.client().world;
+
+		if (world == null) {
+			return;
 		}
-    }
+
+		BlockPosMap map = payload.map();
+		RenderManager.getManager().updateMap(map);
+	}
 }
