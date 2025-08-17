@@ -1,5 +1,7 @@
 package com.aurus.tinytactics.registry;
 
+import java.util.function.Function;
+
 import com.aurus.tinytactics.TinyTactics;
 import com.aurus.tinytactics.items.TacticsRuler;
 
@@ -18,11 +20,11 @@ import net.minecraft.item.ItemStack;
 
 public class ItemRegistrar {
 
-    private static final RegistryKey<ItemGroup> TINYTACTICS_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(), Identifier.of(TinyTactics.MOD_ID, "tinytactics_group"));
+    public static final RegistryKey<ItemGroup> TINYTACTICS_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(), Identifier.of(TinyTactics.MOD_ID, "tinytactics_group"));
 
-    private static final Item TACTICS_RULER = new TacticsRuler();
+    public static final Item TACTICS_RULER = new TacticsRuler();
 
-    private static final ItemGroup TINYTACTICS_GROUP = FabricItemGroup.builder()
+    public static final ItemGroup TINYTACTICS_GROUP = FabricItemGroup.builder()
         .icon(() -> new ItemStack(TACTICS_RULER))
         .displayName(Text.translatable("itemGroup.tinytactics.group_name"))
         .build();
@@ -37,13 +39,13 @@ public class ItemRegistrar {
 
     }
 
-    private static Item registerItem(String name, Item item) {
+    public static Item registerItem(String name, Item item) {
         RegistryKey<Item> itemKey =  RegistryKey.of(RegistryKeys.ITEM, Identifier.of(TinyTactics.MOD_ID, name));
         Registry.register(Registries.ITEM, itemKey, item);
         return item;
     }
 
-    private static void registerToItemGroup(FabricItemGroupEntries entries, Item... items) {
+    public static void registerToItemGroup(FabricItemGroupEntries entries, Item... items) {
         for (Item i : items) {
             entries.add(i);
         }

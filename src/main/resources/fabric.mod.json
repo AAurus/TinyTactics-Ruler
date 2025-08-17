@@ -23,11 +23,7 @@
 		]
 	},
 	"mixins": [
-		"tinytactics.mixins.json",
-		{
-			"config": "tinytactics.client.mixins.json",
-			"environment": "client"
-		}
+		"tinytactics.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",
