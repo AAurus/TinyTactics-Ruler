@@ -5,6 +5,7 @@ import com.aurus.tinytactics.components.BlockPosMapPayload;
 import com.aurus.tinytactics.render.RenderManager;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.world.ClientWorld;
 
@@ -15,6 +16,10 @@ public class TinyTacticsClient implements ClientModInitializer {
 		RenderManager.getManager().init();
 
 		ClientPlayNetworking.registerGlobalReceiver(BlockPosMapPayload.ID, TinyTacticsClient::receiveRulerMapPacket);
+
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            ServerHandler.broadcastPositions();
+        });
 	}
 
 	public static void receiveRulerMapPacket(BlockPosMapPayload payload, ClientPlayNetworking.Context context) {
