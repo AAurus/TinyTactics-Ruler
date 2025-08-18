@@ -18,6 +18,7 @@ public class TinyTactics implements ModInitializer {
 
         ItemRegistrar.registerAll();
         DataRegistrar.registerAll();
+        ServerHandler.init();
 
         LOGGER.info("TinyTactics Online!");
     }

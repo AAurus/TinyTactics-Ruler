@@ -31,5 +31,7 @@ public class TinyTacticsClient implements ClientModInitializer {
 
 		BlockPosMap map = payload.map();
 		RenderManager.getManager().updateMap(map);
+
+		TinyTactics.LOGGER.info("Positions Received");
 	}
 }

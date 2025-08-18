@@ -25,9 +25,15 @@ public class BlockPosMap {
     }
 
     public BlockPosMap add(UUID user, BlockPos position) {
-        BlockPosList newPos = posMap.get(user).add(position);
+        BlockPosList newPos = posMap.getOrDefault(user, BlockPosList.DEFAULT).add(position);
         Map<UUID, BlockPosList> newPosMap = new HashMap<>(posMap);
         newPosMap.put(user, newPos);
+        return new BlockPosMap(newPosMap);
+    }
+
+    public BlockPosMap clearPlayer(UUID user) {
+        Map<UUID, BlockPosList> newPosMap = new HashMap<>(posMap);
+        newPosMap.put(user, BlockPosList.DEFAULT);
         return new BlockPosMap(newPosMap);
     }
 
