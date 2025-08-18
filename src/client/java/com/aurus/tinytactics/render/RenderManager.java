@@ -34,7 +34,6 @@ public class RenderManager {
                 List<Vec3d> vecs = blockPosToVec3ds(list.getPositions());
                 LineDrawer.renderQuadCrossLineStrip(context, vecs, 0xFFFFFFFF, 0.05);
             }
-            LineDrawer.drawDebugLine(context);
         });
     }
 
