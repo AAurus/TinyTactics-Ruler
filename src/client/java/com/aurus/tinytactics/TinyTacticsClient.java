@@ -1,7 +1,7 @@
 package com.aurus.tinytactics;
 
-import com.aurus.tinytactics.components.BlockPosMap;
-import com.aurus.tinytactics.components.BlockPosMapPayload;
+import com.aurus.tinytactics.components.RulerMap;
+import com.aurus.tinytactics.components.RulerMapPayload;
 import com.aurus.tinytactics.render.RenderManager;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -15,21 +15,21 @@ public class TinyTacticsClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		RenderManager.getManager().init();
 
-		ClientPlayNetworking.registerGlobalReceiver(BlockPosMapPayload.ID, TinyTacticsClient::receiveRulerMapPacket);
+		ClientPlayNetworking.registerGlobalReceiver(RulerMapPayload.ID, TinyTacticsClient::receiveRulerMapPacket);
 
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             ServerHandler.broadcastPositions();
         });
 	}
 
-	public static void receiveRulerMapPacket(BlockPosMapPayload payload, ClientPlayNetworking.Context context) {
+	public static void receiveRulerMapPacket(RulerMapPayload payload, ClientPlayNetworking.Context context) {
 		ClientWorld world = context.client().world;
 
 		if (world == null) {
 			return;
 		}
 
-		BlockPosMap map = payload.map();
+		RulerMap map = payload.map();
 		RenderManager.getManager().updateMap(map);
 
 		TinyTactics.LOGGER.info("Positions Received");

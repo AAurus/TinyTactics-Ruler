@@ -2,23 +2,24 @@ package com.aurus.tinytactics.render;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import com.aurus.tinytactics.components.BlockPosList;
-import com.aurus.tinytactics.components.BlockPosMap;
+import com.aurus.tinytactics.components.RulerMap;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.render.Camera;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.DyeColor;
 
 public class RenderManager {
     
-    private BlockPosMap map;
+    private RulerMap map;
 
     private static RenderManager manager;
 
     private RenderManager() {
-        map = BlockPosMap.DEFAULT;
+        map = RulerMap.DEFAULT;
     }
 
     public static RenderManager getManager() {
@@ -30,14 +31,16 @@ public class RenderManager {
 
     public void init() {
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
-            for (BlockPosList list : map.getPosmap().values()) {
-                List<Vec3d> vecs = blockPosToVec3ds(list.getPositions());
-                LineDrawer.renderQuadCrossLineStrip(context, vecs, 0xFFFFFFFF, 0.05);
+            for (Map<DyeColor, List<BlockPos>> userMap : map.getFullMap().values()) {
+                for (List<BlockPos> list : userMap.values()) {
+                    List<Vec3d> vecs = blockPosToVec3ds(list);
+                    LineDrawer.renderQuadCrossLineStrip(context, vecs, 0xFFFFFFFF, 0.05);
+                }
             }
         });
     }
 
-    public void updateMap(BlockPosMap map) {
+    public void updateMap(RulerMap map) {
         this.map = map;
     }
 

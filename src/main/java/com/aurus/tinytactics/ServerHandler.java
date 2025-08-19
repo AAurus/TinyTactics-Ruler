@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.aurus.tinytactics.components.BlockPosMap;
-import com.aurus.tinytactics.components.BlockPosMapPayload;
+import com.aurus.tinytactics.components.RulerMap;
+import com.aurus.tinytactics.components.RulerMapPayload;
 import com.aurus.tinytactics.registry.DataRegistrar;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
@@ -21,11 +21,9 @@ public class ServerHandler {
     public static void init() {
         ServerWorldEvents.LOAD.register((server, world) -> {
             currentServerWorlds.add(world);
-            TinyTactics.LOGGER.info("Worlds loaded");
         });
         ServerWorldEvents.UNLOAD.register((server, world) -> {
-            currentServerWorlds.clear();
-            TinyTactics.LOGGER.info("Worlds unloaded");
+            currentServerWorlds.remove(world);
         });
     }
 
@@ -35,7 +33,7 @@ public class ServerHandler {
 
         for (ServerWorld world : currentServerWorlds) {
             
-            BlockPosMapPayload payload = new BlockPosMapPayload(world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS, () -> BlockPosMap.DEFAULT));
+            RulerMapPayload payload = new RulerMapPayload(world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS, () -> RulerMap.DEFAULT));
 
             Collection<ServerPlayerEntity> players = PlayerLookup.world(world);
             numPlayers += players.size();
@@ -49,7 +47,7 @@ public class ServerHandler {
         TinyTactics.LOGGER.info("Positions broadcasted to " + numPlayers + " players");
     }
 
-    public static void setPositions(World world, BlockPosMap newMap) {
+    public static void setPositions(World world, RulerMap newMap) {
         world.setAttached(DataRegistrar.ALL_RULER_POSITIONS, newMap);
     }
 
