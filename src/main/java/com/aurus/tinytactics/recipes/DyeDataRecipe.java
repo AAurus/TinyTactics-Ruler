@@ -3,6 +3,7 @@ package com.aurus.tinytactics.recipes;
 import java.util.List;
 
 import com.aurus.tinytactics.registry.DataRegistrar;
+import com.google.gson.JsonObject;
 
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
@@ -21,13 +22,11 @@ public class DyeDataRecipe implements Recipe<CraftingRecipeInput> {
 
     private final Ingredient dyeInput;
     private final Ingredient dyeableInput;
-    private final ItemStack outputStack;
     private final Identifier id;
 
-    public DyeDataRecipe(Ingredient dyeInput, Ingredient dyeableInput, ItemStack output, Identifier id) {
+    public DyeDataRecipe(Ingredient dyeInput, Ingredient dyeableInput, Identifier id) {
         this.dyeInput = dyeInput;
         this.dyeableInput = dyeableInput;
-        this.outputStack = output;
         this.id = id;
     }
 
@@ -41,10 +40,13 @@ public class DyeDataRecipe implements Recipe<CraftingRecipeInput> {
 
     @Override
     public boolean matches(CraftingRecipeInput input, World world) {
+        
         if (input.getStackCount() == 2) {
+
             List<ItemStack> stacks = input.getStacks();
             Item dyeItemRaw = null;
             boolean hasDyeable = false;
+
             for (ItemStack stack : stacks) {
                 if (dyeInput.test(stack)) {
                     dyeItemRaw = stack.getItem();
@@ -53,22 +55,31 @@ public class DyeDataRecipe implements Recipe<CraftingRecipeInput> {
                     hasDyeable = true;
                 }
             }
+
             if (dyeItemRaw != null) {
                 try {
                 DyeItem dyeItem = (DyeItem) dyeItemRaw;
+
                 return (dyeItem != null) && hasDyeable;
+
                 } catch (ClassCastException e) {
                     return false;
                 }
             }
+
         }
+
         return false;
+
     }
+
     @Override
     public ItemStack craft(CraftingRecipeInput input, WrapperLookup lookup) {
+        
         List<ItemStack> stacks = input.getStacks();
         Item dyeItemRaw = null;
         ItemStack dyeableItem = null;
+
         for (ItemStack stack : stacks) {
             if (dyeInput.test(stack)) {
                 dyeItemRaw = stack.getItem();
@@ -77,15 +88,18 @@ public class DyeDataRecipe implements Recipe<CraftingRecipeInput> {
                 dyeableItem = stack;
             }
         }
+
+        ItemStack resultItem = dyeableItem.copy();
         DyeColor color = getDyeColorOrNull(dyeItemRaw);
         if (color != null) {
-            dyeableItem.set(DataRegistrar.DYE_COLOR, color);
+            resultItem.set(DataRegistrar.DYE_COLOR, color);
         }
-        return dyeableItem;
+        return resultItem;
+
     }
     @Override
     public boolean fits(int var1, int var2) {
-        return false;
+        return (var1 + var2 == 3);
     }
     @Override
     public RecipeSerializer<?> getSerializer() {
@@ -93,7 +107,7 @@ public class DyeDataRecipe implements Recipe<CraftingRecipeInput> {
     }
     @Override
     public RecipeType<?> getType() {
-        return null;
+        return DyeDataRecipeType.INSTANCE;
     }
     @Override
     public ItemStack getResult(WrapperLookup registriesLookup) {
@@ -101,11 +115,28 @@ public class DyeDataRecipe implements Recipe<CraftingRecipeInput> {
     }
 
     private DyeColor getDyeColorOrNull(Item item) {
+        
         try {
             DyeItem dyeItem = (DyeItem) item;
             return dyeItem.getColor();
         } catch (ClassCastException e) {
             return null;
         }
+
     }
+
+    public class DyeDataRecipeJsonFormat {
+        JsonObject dyeInput;
+        JsonObject dyeableInput;
+    }
+
+    public static class DyeDataRecipeType implements RecipeType<DyeDataRecipe> {
+        
+        private DyeDataRecipeType() {}
+
+        public static final DyeDataRecipeType INSTANCE = new DyeDataRecipeType();
+
+        public static final String ID = "dye_data_recipe";
+    }
+
 }
