@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"com.aurus.tinytactics.TinyTacticsClient"
+		],
+		"fabric-datagen": [
+			"com.aurus.tinytactics.datagen.TinyTacticsDatagen"
 		]
 	},
 	"mixins": [
