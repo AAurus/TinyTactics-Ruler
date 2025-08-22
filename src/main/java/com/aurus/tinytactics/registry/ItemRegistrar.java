@@ -18,27 +18,32 @@ import net.minecraft.item.ItemStack;
 
 public class ItemRegistrar {
 
-    public static final RegistryKey<ItemGroup> TINYTACTICS_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(), Identifier.of(TinyTactics.MOD_ID, "tinytactics_group"));
+    public static final RegistryKey<ItemGroup> TINYTACTICS_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),
+            Identifier.of(TinyTactics.MOD_ID, "tinytactics_group"));
 
     public static final Item TACTICS_RULER = new TacticsRuler();
 
+    public static final Item[] SIMPLE_DYEABLE_ITEMS = { TACTICS_RULER };
+
     public static final ItemGroup TINYTACTICS_GROUP = FabricItemGroup.builder()
-        .icon(() -> new ItemStack(TACTICS_RULER))
-        .displayName(Text.translatable("itemGroup.tinytactics.group_name"))
-        .build();
+            .icon(() -> new ItemStack(TACTICS_RULER))
+            .displayName(Text.translatable("itemGroup.tinytactics.group_name"))
+            .build();
 
     public static void registerAll() {
 
         registerItem("tactics_ruler", TACTICS_RULER);
-        
+
         Registry.register(Registries.ITEM_GROUP, TINYTACTICS_GROUP_KEY, TINYTACTICS_GROUP);
 
-        ItemGroupEvents.modifyEntriesEvent(TINYTACTICS_GROUP_KEY).register((FabricItemGroupEntries e) -> {ItemRegistrar.registerToItemGroup(e, new Item[]{TACTICS_RULER});});
+        ItemGroupEvents.modifyEntriesEvent(TINYTACTICS_GROUP_KEY).register((FabricItemGroupEntries e) -> {
+            ItemRegistrar.registerToItemGroup(e, new Item[] { TACTICS_RULER });
+        });
 
     }
 
     public static Item registerItem(String name, Item item) {
-        RegistryKey<Item> itemKey =  RegistryKey.of(RegistryKeys.ITEM, Identifier.of(TinyTactics.MOD_ID, name));
+        RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(TinyTactics.MOD_ID, name));
         Registry.register(Registries.ITEM, itemKey, item);
         return item;
     }

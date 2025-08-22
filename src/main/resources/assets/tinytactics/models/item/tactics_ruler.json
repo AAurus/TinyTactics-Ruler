@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "tinytactics:item/tactics_ruler"
+    "layer0": "tinytactics:item/tactics_ruler",
+    "layer1": "tinytactics:item/tactics_ruler_overlay"
   }
 }

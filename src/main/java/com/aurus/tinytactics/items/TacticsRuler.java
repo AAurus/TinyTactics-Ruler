@@ -46,7 +46,7 @@ public class TacticsRuler extends Item {
     }
 
     protected ActionResult clearPoints(World world, DyeColor color) {
-        
+
         if (this.player == null) {
             return ActionResult.FAIL;
         }

@@ -7,7 +7,6 @@ import java.util.Objects;
 import org.jetbrains.annotations.Nullable;
 
 import com.aurus.tinytactics.registry.DataRegistrar;
-import com.aurus.tinytactics.TinyTactics;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

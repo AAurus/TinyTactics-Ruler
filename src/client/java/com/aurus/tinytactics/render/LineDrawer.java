@@ -20,7 +20,11 @@ import net.minecraft.util.math.Vec3d;
 public class LineDrawer {
 
     public static void drawDebugLine(WorldRenderContext context) {
-        renderQuadCrossLine(context, new Vec3d(0.5, 0.5, 0.5), new Vec3d(0.5, 40.5, 40.5), 0xFF0000FF, 0.05);
+        List<Vec3d> vec3ds = new ArrayList<>();
+        vec3ds.add(new Vec3d(0.5, 0.5, 0.5));
+        vec3ds.add(new Vec3d(0.5, 40.5, 40.5));
+        renderLinesInWorld(context, vec3ds,
+                0xFF0000FF, 5F);
     }
 
     public static void renderQuadCrossLine(WorldRenderContext context, Vec3d pos1, Vec3d pos2, int color,
@@ -38,6 +42,22 @@ public class LineDrawer {
             vecs.addAll(createQuadCross(pos1, pos2, width));
         }
         renderQuadsInWorld(context, vecs, color);
+    }
+
+    public static void renderQuadCrossLinesToCorners(WorldRenderContext context, Vec3d from, Vec3d to, int color,
+            double width) {
+        List<Vec3d> vecs = new ArrayList<>();
+        vecs.add(to.add(0.5, 0.5, 0.5));
+        vecs.add(to.add(0.5, 0.5, -0.5));
+        vecs.add(to.add(0.5, -0.5, 0.5));
+        vecs.add(to.add(0.5, -0.5, -0.5));
+        vecs.add(to.add(-0.5, 0.5, 0.5));
+        vecs.add(to.add(-0.5, 0.5, -0.5));
+        vecs.add(to.add(-0.5, -0.5, 0.5));
+        vecs.add(to.add(-0.5, -0.5, -0.5));
+        for (Vec3d vec : vecs) {
+            renderQuadCrossLine(context, from, vec, color, width);
+        }
     }
 
     public static List<Vec3d> createQuadCross(Vec3d pos1, Vec3d pos2, double lineWidth) {
@@ -87,7 +107,49 @@ public class LineDrawer {
             RenderSystem.disableCull();
             RenderSystem.enableDepthTest();
             RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            // RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+            BufferRenderer.drawWithGlobalProgram(buffer.end());
+
+            matrices.pop();
+        }
+    }
+
+    public static void renderLinesInWorld(WorldRenderContext context, List<Vec3d> vecs, int color, float width) {
+        if (!vecs.isEmpty()) {
+            Camera camera = context.camera();
+            MatrixStack matrices = Objects.requireNonNull(context.matrixStack());
+
+            matrices.push();
+
+            final Tessellator tess = Tessellator.getInstance();
+            BufferBuilder buffer = tess.begin(DrawMode.LINE_STRIP, VertexFormats.LINES);
+
+            matrices.translate(-camera.getPos().x, -camera.getPos().y, -camera.getPos().z);
+
+            Vec3d normal = null;
+
+            for (int i = 1; i < vecs.size(); i++) {
+                Vec3d to = vecs.get(i);
+                Vec3d from = vecs.get(i - 1);
+                normal = to.subtract(from).normalize();
+                buffer.vertex(matrices.peek(), (float) from.getX(), (float) from.getY(), (float) from.getZ())
+                        .color(color)
+                        .normal((float) normal.getX(), (float) normal.getY(), (float) normal.getZ());
+            }
+            Vec3d finalVec = vecs.get(vecs.size() - 1);
+            buffer.vertex(matrices.peek(), (float) finalVec.getX(), (float) finalVec.getY(), (float) finalVec.getZ())
+                    .color(color)
+                    .normal((float) normal.getX(), (float) normal.getY(), (float) normal.getZ());
+
+            // RenderSystem.enableBlend();
+            // RenderSystem.defaultBlendFunc();
+            // RenderSystem.depthMask(false);
+            RenderSystem.disableCull();
+            RenderSystem.enableDepthTest();
+            RenderSystem.lineWidth(width);
+            RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+            // RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             BufferRenderer.drawWithGlobalProgram(buffer.end());
 
