@@ -3,7 +3,8 @@
 	"package": "com.aurus.tinytactics.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"TinyTacticsMixin"
+		"TinyTacticsMixin",
+		"CraftingScreenHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
