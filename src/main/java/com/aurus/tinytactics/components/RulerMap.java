@@ -31,7 +31,7 @@ public class RulerMap {
         List<BlockPos> posList = posMap.getOrDefault(user, new HashMap<>()).getOrDefault(color, new ArrayList<>());
         List<BlockPos> newPos = new ArrayList<>(posList);
         newPos.add(position);
-        Map<DyeColor, List<BlockPos>> newUserPosMap = new HashMap<>(posMap.get(user));
+        Map<DyeColor, List<BlockPos>> newUserPosMap = new HashMap<>(posMap.getOrDefault(user, new HashMap<>()));
         newUserPosMap.put(color, newPos);
         Map<UUID, Map<DyeColor, List<BlockPos>>> newPosMap = new HashMap<>(posMap);
         newPosMap.put(user, newUserPosMap);
@@ -55,11 +55,11 @@ public class RulerMap {
 
     public static final RulerMap DEFAULT = new RulerMap(new HashMap<>());
 
-    public static final Codec<RulerMap> CODEC = RecordCodecBuilder.create(instance -> 
-        instance.group(Codec.unboundedMap(Uuids.CODEC, Codec.unboundedMap(DyeColor.CODEC, BlockPos.CODEC.listOf()))
+    public static final Codec<RulerMap> CODEC = RecordCodecBuilder.create(instance -> instance
+            .group(Codec.unboundedMap(Uuids.CODEC, Codec.unboundedMap(DyeColor.CODEC, BlockPos.CODEC.listOf()))
                     .fieldOf("posMap")
                     .forGetter(RulerMap::getFullMap))
-                .apply(instance, RulerMap::new));
+            .apply(instance, RulerMap::new));
 
     public static final PacketCodec<ByteBuf, RulerMap> PACKET_CODEC = PacketCodecs.codec(CODEC);
 }

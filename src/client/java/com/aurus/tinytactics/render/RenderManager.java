@@ -13,7 +13,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.DyeColor;
 
 public class RenderManager {
-    
+
     private RulerMap map;
 
     private static RenderManager manager;
@@ -32,9 +32,10 @@ public class RenderManager {
     public void init() {
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
             for (Map<DyeColor, List<BlockPos>> userMap : map.getFullMap().values()) {
-                for (List<BlockPos> list : userMap.values()) {
+                for (DyeColor color : userMap.keySet()) {
+                    List<BlockPos> list = userMap.get(color);
                     List<Vec3d> vecs = blockPosToVec3ds(list);
-                    LineDrawer.renderQuadCrossLineStrip(context, vecs, 0xFFFFFFFF, 0.05);
+                    LineDrawer.renderQuadCrossLineStrip(context, vecs, color.getEntityColor(), 0.05);
                 }
             }
         });
@@ -45,9 +46,10 @@ public class RenderManager {
     }
 
     public static Vec3d transformToCameraSpace(Vec3d pos, Camera camera) {
-        //Vec3d tempT = pos.add(camera.getPos());
-        //Vector3d tempTR = camera.getRotation().transform(new Vector3d(tempT.getX(), tempT.getY(), tempT.getZ()));
-        //return new Vec3d(tempTR.x(), tempTR.y(), tempTR.z());
+        // Vec3d tempT = pos.add(camera.getPos());
+        // Vector3d tempTR = camera.getRotation().transform(new Vector3d(tempT.getX(),
+        // tempT.getY(), tempT.getZ()));
+        // return new Vec3d(tempTR.x(), tempTR.y(), tempTR.z());
         return pos.subtract(camera.getPos());
     }
 
