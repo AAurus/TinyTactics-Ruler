@@ -21,10 +21,10 @@ public class RenderManager {
     private static RenderManager manager;
 
     private static final double MAIN_RULER_LINE_OPACITY = 1.0;
-    private static final double MAIN_RULER_LINE_WIDTH = 0.05;
+    private static final float MAIN_RULER_LINE_WIDTH = 0.05F;
 
     private static final double CORNER_RULER_LINE_OPACITY = 0.5;
-    private static final double CORNER_RULER_LINE_WIDTH = 0.01;
+    private static final float CORNER_RULER_LINE_WIDTH = 0.02F;
 
     private RenderManager() {
         map = RulerMap.DEFAULT;
@@ -46,13 +46,13 @@ public class RenderManager {
                 for (DyeColor color : userMap.keySet()) {
                     List<BlockPos> list = userMap.get(color);
                     List<Vec3d> vecs = blockPosToVec3ds(list);
-                    int mainColor = setColorAlpha(color.getEntityColor(), MAIN_RULER_LINE_OPACITY);
-                    LineDrawer.renderQuadCrossLineStrip(context, vecs, mainColor, MAIN_RULER_LINE_WIDTH);
-                    if (vecs.size() >= 1) {
+                    if (vecs.size() >= 2) {
+                        int mainColor = setColorAlpha(color.getEntityColor(), MAIN_RULER_LINE_OPACITY);
+                        LineDrawer.renderQuadCrossLineStrip(context, vecs, mainColor, MAIN_RULER_LINE_WIDTH);
                         Vec3d from = vecs.get(Math.max(vecs.size() - 2, 0));
                         Vec3d to = vecs.get(Math.max(vecs.size() - 1, 0));
                         int conerColor = setColorAlpha(mainColor, CORNER_RULER_LINE_OPACITY);
-                        LineDrawer.renderQuadCrossLinesToCorners(context, from, to, conerColor,
+                        LineDrawer.renderLinesToCorners(context, from, to, conerColor,
                                 CORNER_RULER_LINE_WIDTH);
                     }
                 }
@@ -62,14 +62,6 @@ public class RenderManager {
 
     public void updateMap(RulerMap map) {
         this.map = map;
-    }
-
-    public static Vec3d transformToCameraSpace(Vec3d pos, Camera camera) {
-        // Vec3d tempT = pos.add(camera.getPos());
-        // Vector3d tempTR = camera.getRotation().transform(new Vector3d(tempT.getX(),
-        // tempT.getY(), tempT.getZ()));
-        // return new Vec3d(tempTR.x(), tempTR.y(), tempTR.z());
-        return pos.subtract(camera.getPos());
     }
 
     public static List<Vec3d> blockPosToVec3ds(List<BlockPos> blockPos) {
