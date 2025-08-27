@@ -7,7 +7,6 @@ import java.util.Map;
 import com.aurus.tinytactics.components.RulerMap;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.client.render.Camera;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.DyeColor;
@@ -39,22 +38,23 @@ public class RenderManager {
 
     public void init() {
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
-
-            LineDrawer.drawDebugLine(context);
-
             for (Map<DyeColor, List<BlockPos>> userMap : map.getFullMap().values()) {
                 for (DyeColor color : userMap.keySet()) {
+
                     List<BlockPos> list = userMap.get(color);
                     List<Vec3d> vecs = blockPosToVec3ds(list);
+
                     if (vecs.size() >= 2) {
                         int mainColor = setColorAlpha(color.getEntityColor(), MAIN_RULER_LINE_OPACITY);
                         LineDrawer.renderQuadCrossLineStrip(context, vecs, mainColor, MAIN_RULER_LINE_WIDTH);
+
                         Vec3d from = vecs.get(Math.max(vecs.size() - 2, 0));
                         Vec3d to = vecs.get(Math.max(vecs.size() - 1, 0));
                         int conerColor = setColorAlpha(mainColor, CORNER_RULER_LINE_OPACITY);
                         LineDrawer.renderLinesToCorners(context, from, to, conerColor,
                                 CORNER_RULER_LINE_WIDTH);
                     }
+
                 }
             }
         });

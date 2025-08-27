@@ -37,7 +37,8 @@ public class ItemRegistrar {
         Registry.register(Registries.ITEM_GROUP, TINYTACTICS_GROUP_KEY, TINYTACTICS_GROUP);
 
         ItemGroupEvents.modifyEntriesEvent(TINYTACTICS_GROUP_KEY).register((FabricItemGroupEntries e) -> {
-            ItemRegistrar.registerToItemGroup(e, new Item[] { TACTICS_RULER });
+            ItemRegistrar.registerToItemGroup(e, TACTICS_RULER, BlockRegistrar.ACTOR_MARKER.asItem(),
+                    BlockRegistrar.TEST_BLOCK.asItem());
         });
 
     }
@@ -48,9 +49,9 @@ public class ItemRegistrar {
         return item;
     }
 
-    public static void registerToItemGroup(FabricItemGroupEntries entries, Item... items) {
+    public static void registerToItemGroup(FabricItemGroupEntries itemGroup, Item... items) {
         for (Item i : items) {
-            entries.add(i);
+            itemGroup.add(i);
         }
     }
 }

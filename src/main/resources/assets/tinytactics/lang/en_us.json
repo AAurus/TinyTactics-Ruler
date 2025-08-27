@@ -1,5 +1,5 @@
 {
   "item.tinytactics.tactics_ruler": "Tactics Ruler",
-  "itemGroup.tinytactics.group_name": "TinyTactics"
-
+  "itemGroup.tinytactics.group_name": "TinyTactics",
+  "block.tinytactics.actor_marker": "Actor Marker"
 }

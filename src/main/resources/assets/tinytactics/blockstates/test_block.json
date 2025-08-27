@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "tinytactics:block/test_block"
+        }
+    }
+}
