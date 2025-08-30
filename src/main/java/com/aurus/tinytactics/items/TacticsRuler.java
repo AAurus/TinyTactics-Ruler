@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import com.aurus.tinytactics.ServerHandler;
-import com.aurus.tinytactics.components.RulerMap;
+import com.aurus.tinytactics.data.RulerMap;
 import com.aurus.tinytactics.registry.DataRegistrar;
 
 public class TacticsRuler extends Item {

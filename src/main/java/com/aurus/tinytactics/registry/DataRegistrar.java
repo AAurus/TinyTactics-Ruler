@@ -1,8 +1,8 @@
 package com.aurus.tinytactics.registry;
 
 import com.aurus.tinytactics.TinyTactics;
-import com.aurus.tinytactics.components.RulerMap;
-import com.aurus.tinytactics.components.RulerMapPayload;
+import com.aurus.tinytactics.data.RulerMap;
+import com.aurus.tinytactics.data.RulerMapPayload;
 import com.aurus.tinytactics.recipes.SimpleDyeRecipe;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;

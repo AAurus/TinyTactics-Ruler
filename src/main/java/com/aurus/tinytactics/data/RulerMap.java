@@ -1,4 +1,4 @@
-package com.aurus.tinytactics.components;
+package com.aurus.tinytactics.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,5 +1,8 @@
 package com.aurus.tinytactics.blocks.actor_marker;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.aurus.tinytactics.registry.BlockRegistrar;
 
 import net.minecraft.block.BlockState;
@@ -11,57 +14,76 @@ import net.minecraft.util.math.BlockPos;
 
 public class ActorMarkerBlockEntity extends BlockEntity {
 
-    private ItemStack leftHandItem = ItemStack.EMPTY;
-    private ItemStack rightHandItem = ItemStack.EMPTY;
-    private ItemStack headItem = ItemStack.EMPTY;
-    private ItemStack attachmentItem = ItemStack.EMPTY;
+    private Map<String, ItemStack> items = Map.of(
+            "LEFT_HAND", ItemStack.EMPTY,
+            "RIGHT_HAND", ItemStack.EMPTY,
+            "HEAD", ItemStack.EMPTY,
+            "ATTACHMENT", ItemStack.EMPTY);
 
     public ActorMarkerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockRegistrar.ACTOR_MARKER_BLOCK_ENTITY, pos, state);
     }
 
     public ItemStack getLeftHandItem() {
-        return leftHandItem;
+        return items.getOrDefault("LEFT_HAND", ItemStack.EMPTY);
     }
 
     public ItemStack getRightHandItem() {
-        return rightHandItem;
+        return items.getOrDefault("RIGHT_HAND", ItemStack.EMPTY);
     }
 
     public ItemStack getHeadItem() {
-        return headItem;
+        return items.getOrDefault("HEAD", ItemStack.EMPTY);
     }
 
     public ItemStack getAttachmentItem() {
-        return attachmentItem;
+        return items.getOrDefault("ATTACHMENT", ItemStack.EMPTY);
     }
 
     public void setLeftHandItem(ItemStack item) {
-        leftHandItem = item.copy();
+        setItem("LEFT_HAND", item.copy());
         markDirty();
     }
 
     public void setRightHandItem(ItemStack item) {
-        rightHandItem = item.copy();
+        setItem("RIGHT_HAND", item.copy());
         markDirty();
     }
 
     public void setHeadItem(ItemStack item) {
-        headItem = item.copy();
+        setItem("HEAD", item.copy());
         markDirty();
     }
 
     public void setAttachmentItem(ItemStack item) {
-        attachmentItem = item.copy();
+        setItem("ATTACHMENT", item.copy());
         markDirty();
+    }
+
+    public boolean setItem(String key, ItemStack item) {
+        if (items.keySet().contains(key)) {
+            Map<String, ItemStack> newItems = new HashMap<>(items);
+            newItems.put(key, item);
+            items = newItems;
+            return true;
+        }
+        return false;
+    }
+
+    public ItemStack getItem(String key) {
+        return items.getOrDefault(key, ItemStack.EMPTY);
+    }
+
+    public boolean hasItem(String key) {
+        return (!items.getOrDefault(key, ItemStack.EMPTY).equals(ItemStack.EMPTY));
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
-        encodeItemOrEmpty(nbt, lookup, leftHandItem, "left_hand_item");
-        encodeItemOrEmpty(nbt, lookup, rightHandItem, "right_hand_item");
-        encodeItemOrEmpty(nbt, lookup, headItem, "head_item");
-        encodeItemOrEmpty(nbt, lookup, attachmentItem, "attachment_item");
+        encodeItemOrEmpty(nbt, lookup, getLeftHandItem(), "left_hand_item");
+        encodeItemOrEmpty(nbt, lookup, getRightHandItem(), "right_hand_item");
+        encodeItemOrEmpty(nbt, lookup, getHeadItem(), "head_item");
+        encodeItemOrEmpty(nbt, lookup, getAttachmentItem(), "attachment_item");
 
         super.writeNbt(nbt, lookup);
     }
@@ -76,10 +98,10 @@ public class ActorMarkerBlockEntity extends BlockEntity {
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
         super.readNbt(nbt, lookup);
 
-        leftHandItem = ItemStack.fromNbt(lookup, nbt.get("left_hand_item")).orElse(ItemStack.EMPTY);
-        rightHandItem = ItemStack.fromNbt(lookup, nbt.get("right_hand_item")).orElse(ItemStack.EMPTY);
-        headItem = ItemStack.fromNbt(lookup, nbt.get("head_item")).orElse(ItemStack.EMPTY);
-        attachmentItem = ItemStack.fromNbt(lookup, nbt.get("attachment_item")).orElse(ItemStack.EMPTY);
+        setLeftHandItem(ItemStack.fromNbt(lookup, nbt.get("left_hand_item")).orElse(ItemStack.EMPTY));
+        setRightHandItem(ItemStack.fromNbt(lookup, nbt.get("right_hand_item")).orElse(ItemStack.EMPTY));
+        setHeadItem(ItemStack.fromNbt(lookup, nbt.get("head_item")).orElse(ItemStack.EMPTY));
+        setAttachmentItem(ItemStack.fromNbt(lookup, nbt.get("attachment_item")).orElse(ItemStack.EMPTY));
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.aurus.tinytactics.blocks.actor_marker;
 
+import java.util.Map;
+
+import com.aurus.tinytactics.data.DyeColorProperty;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.block.Block;
@@ -16,7 +19,9 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -27,17 +32,25 @@ import net.minecraft.world.World;
 public class ActorMarkerBlock extends BlockWithEntity {
 
     public static final int MIN_ROTATION_INDEX = 0;
-    public static final int MAX_ROTATION_INDEX = 7;
+    public static final int MAX_ROTATION_INDEX = 15;
+
+    private static final Map<Integer, String> LOCAL_ROTATION_ITEMS = Map.ofEntries(
+            Map.entry(ActorMarkerRotationHelper.LEFT, "LEFT_HAND"),
+            Map.entry(ActorMarkerRotationHelper.RIGHT, "RIGHT_HAND"),
+            Map.entry(ActorMarkerRotationHelper.FRONT, "HEAD"),
+            Map.entry(ActorMarkerRotationHelper.BACK, "ATTACHMENT"));
 
     public static final IntProperty ROTATION = IntProperty.of("rotation", MIN_ROTATION_INDEX, MAX_ROTATION_INDEX);
+    public static final Property<DyeColor> COLOR = DyeColorProperty.of("color");
 
+    private static final SoundEvent EQUIP_SOUND = SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value();
     private static final SoundEvent ROTATE_SOUND = SoundEvents.BLOCK_COMPARATOR_CLICK;
 
     private static final VoxelShape OUTLINE_SHAPE = Block.createCuboidShape(1.0, 1.0, 1.0, 15.0, 15.0, 15.0);
 
     public ActorMarkerBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(ROTATION, 0));
+        setDefaultState(getDefaultState().with(ROTATION, 0).with(COLOR, DyeColor.WHITE));
     }
 
     @Override
@@ -48,6 +61,7 @@ public class ActorMarkerBlock extends BlockWithEntity {
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(ROTATION);
+        builder.add(COLOR);
     }
 
     @Override
@@ -57,7 +71,7 @@ public class ActorMarkerBlock extends BlockWithEntity {
 
     @Override
     protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+        return BlockRenderType.INVISIBLE;
     }
 
     protected VoxelShape getCullingShape(BlockState state, BlockView world,
@@ -74,43 +88,49 @@ public class ActorMarkerBlock extends BlockWithEntity {
         if (!player.getAbilities().allowModifyWorld) {
             return ActionResult.PASS;
         }
-
+        int localDirection = ActorMarkerRotationHelper.toLocalDirection(player.getYaw(), state.get(ROTATION));
+        boolean itemSuccess = false;
         if (player.getMainHandStack().equals(ItemStack.EMPTY)) {
-            world.setBlockState(pos, state.with(ROTATION, (state.get(ROTATION) + 1) % 8));
+            itemSuccess = dequipActorMarker(state, world, pos, player, localDirection);
+        } else {
+            itemSuccess = equipActorMarker(state, world, pos, player, localDirection);
+        }
+        if (itemSuccess) {
+            world.playSound(player, pos, EQUIP_SOUND, SoundCategory.BLOCKS);
+            return ActionResult.SUCCESS;
+        } else if ((localDirection == ActorMarkerRotationHelper.LEFT
+                || localDirection == ActorMarkerRotationHelper.RIGHT)) {
+            int newRotation = state.get(ROTATION) + (-1 * (localDirection + 4)) + (MAX_ROTATION_INDEX
+                    + 1);
+            world.setBlockState(pos, state.with(ROTATION, (newRotation % (MAX_ROTATION_INDEX + 1))));
             world.playSound(player, pos, ROTATE_SOUND, SoundCategory.BLOCKS);
             return ActionResult.SUCCESS;
-        } else {
-            return equipActorMarker(state, world, pos, player, hit);
-        }
-    }
-
-    protected ActionResult equipActorMarker(BlockState state, World world, BlockPos pos, PlayerEntity player,
-            BlockHitResult hit) {
-        if (world.getBlockEntity(pos) instanceof ActorMarkerBlockEntity actorMarkerBlockEntity) {
-            float yawToPlayer = player.getYaw();
-            if (yawToPlayer >= 0) {
-                yawToPlayer -= 180;
-            } else {
-                yawToPlayer += 180;
-            }
-
-            switch (ActorMarkerRotationHelper.toLocalDirection(yawToPlayer, state.get(ROTATION))) {
-                case ActorMarkerRotationHelper.FRONT:
-                    actorMarkerBlockEntity.setHeadItem(player.getActiveItem().copy());
-                    return ActionResult.SUCCESS;
-                case ActorMarkerRotationHelper.LEFT:
-                    actorMarkerBlockEntity.setLeftHandItem(player.getActiveItem().copy());
-                    return ActionResult.SUCCESS;
-                case ActorMarkerRotationHelper.RIGHT:
-                    actorMarkerBlockEntity.setRightHandItem(player.getActiveItem().copy());
-                    return ActionResult.SUCCESS;
-                case ActorMarkerRotationHelper.BACK:
-                    actorMarkerBlockEntity.setAttachmentItem(player.getActiveItem().copy());
-                    return ActionResult.SUCCESS;
-            }
-            return ActionResult.PASS;
         }
         return ActionResult.PASS;
+    }
+
+    protected boolean equipActorMarker(BlockState state, World world, BlockPos pos, PlayerEntity player,
+            int localDirection) {
+        if (world.getBlockEntity(pos) instanceof ActorMarkerBlockEntity actorMarkerBlockEntity) {
+            String key = LOCAL_ROTATION_ITEMS.get(localDirection);
+            if (!actorMarkerBlockEntity.hasItem(key)) {
+                actorMarkerBlockEntity.setItem(key, player.getMainHandStack().copy());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean dequipActorMarker(BlockState state, World world, BlockPos pos, PlayerEntity player,
+            int localDirection) {
+        if (world.getBlockEntity(pos) instanceof ActorMarkerBlockEntity actorMarkerBlockEntity) {
+            String key = LOCAL_ROTATION_ITEMS.get(localDirection);
+            if (actorMarkerBlockEntity.hasItem(key)) {
+                actorMarkerBlockEntity.setItem(key, ItemStack.EMPTY);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
