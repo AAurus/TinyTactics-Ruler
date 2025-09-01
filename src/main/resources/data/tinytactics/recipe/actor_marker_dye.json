@@ -1,0 +1,8 @@
+{
+  "type": "tinytactics:simple_dye",
+  "category": "misc",
+  "item": {
+    "count": 1,
+    "id": "tinytactics:actor_marker"
+  }
+}

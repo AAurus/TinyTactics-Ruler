@@ -17,9 +17,6 @@ import net.minecraft.util.Identifier;
 
 public class BlockRegistrar {
 
-    public static void registerAll() {
-    }
-
     public static final Block ACTOR_MARKER = registerBlock("actor_marker",
             new ActorMarkerBlock(AbstractBlock.Settings.create()), true);
 
@@ -28,6 +25,11 @@ public class BlockRegistrar {
 
     public static final Block TEST_BLOCK = registerBlock("test_block", new TestBlock(AbstractBlock.Settings.create()),
             true);
+
+    public static final Block[] SIMPLE_DYEABLE_BLOCKS = { ACTOR_MARKER };
+
+    public static void registerAll() {
+    }
 
     private static Block registerBlock(String name, Block block, boolean shouldRegisterItem) {
         Identifier id = Identifier.of(TinyTactics.MOD_ID, name);

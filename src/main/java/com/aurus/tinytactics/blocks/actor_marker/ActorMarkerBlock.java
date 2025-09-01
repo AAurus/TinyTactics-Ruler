@@ -2,7 +2,9 @@ package com.aurus.tinytactics.blocks.actor_marker;
 
 import java.util.Map;
 
+import com.aurus.tinytactics.data.ActorMarkerInventory;
 import com.aurus.tinytactics.data.DyeColorProperty;
+import com.aurus.tinytactics.registry.BlockRegistrar;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.block.Block;
@@ -28,6 +30,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 
 public class ActorMarkerBlock extends BlockWithEntity {
 
@@ -35,10 +38,10 @@ public class ActorMarkerBlock extends BlockWithEntity {
     public static final int MAX_ROTATION_INDEX = 15;
 
     private static final Map<Integer, String> LOCAL_ROTATION_ITEMS = Map.ofEntries(
-            Map.entry(ActorMarkerRotationHelper.LEFT, "LEFT_HAND"),
-            Map.entry(ActorMarkerRotationHelper.RIGHT, "RIGHT_HAND"),
-            Map.entry(ActorMarkerRotationHelper.FRONT, "HEAD"),
-            Map.entry(ActorMarkerRotationHelper.BACK, "ATTACHMENT"));
+            Map.entry(ActorMarkerRotationHelper.LEFT, ActorMarkerInventory.LEFT_HAND_KEY),
+            Map.entry(ActorMarkerRotationHelper.RIGHT, ActorMarkerInventory.RIGHT_HAND_KEY),
+            Map.entry(ActorMarkerRotationHelper.FRONT, ActorMarkerInventory.HEAD_KEY),
+            Map.entry(ActorMarkerRotationHelper.BACK, ActorMarkerInventory.ATTACHMENT_KEY));
 
     public static final IntProperty ROTATION = IntProperty.of("rotation", MIN_ROTATION_INDEX, MAX_ROTATION_INDEX);
     public static final Property<DyeColor> COLOR = DyeColorProperty.of("color");
@@ -107,6 +110,14 @@ public class ActorMarkerBlock extends BlockWithEntity {
             return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;
+    }
+
+    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+        ItemStack itemStack = super.getPickStack(world, pos, state);
+        world.getBlockEntity(pos, BlockRegistrar.ACTOR_MARKER_BLOCK_ENTITY).ifPresent((blockEntity) -> {
+            blockEntity.setStackNbt(itemStack, world.getRegistryManager());
+        });
+        return itemStack;
     }
 
     protected boolean equipActorMarker(BlockState state, World world, BlockPos pos, PlayerEntity player,

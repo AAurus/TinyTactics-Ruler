@@ -1,6 +1,7 @@
 package com.aurus.tinytactics.registry;
 
 import com.aurus.tinytactics.TinyTactics;
+import com.aurus.tinytactics.data.ActorMarkerInventory;
 import com.aurus.tinytactics.data.RulerMap;
 import com.aurus.tinytactics.data.RulerMapPayload;
 import com.aurus.tinytactics.recipes.SimpleDyeRecipe;
@@ -29,6 +30,10 @@ public class DataRegistrar {
             Registries.DATA_COMPONENT_TYPE,
             Identifier.of(TinyTactics.MOD_ID, "dye_color"),
             ComponentType.<DyeColor>builder().codec(DyeColor.CODEC).build());
+
+    public static final ComponentType<ActorMarkerInventory> ACTOR_MARKER_INVENTORY = Registry.register(
+            Registries.DATA_COMPONENT_TYPE, Identifier.of(TinyTactics.MOD_ID, "actor_marker_inventory"),
+            ComponentType.<ActorMarkerInventory>builder().codec(ActorMarkerInventory.CODEC).build());
 
     public static final AttachmentType<RulerMap> ALL_RULER_POSITIONS = AttachmentRegistry.create(
             Identifier.of(TinyTactics.MOD_ID, "all_ruler_positions"),

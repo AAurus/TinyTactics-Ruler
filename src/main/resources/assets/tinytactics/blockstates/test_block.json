@@ -1,7 +1,7 @@
 {
     "variants": {
         "": {
-            "model": "tinytactics:block/test_block"
+            "model": "tinytactics:block/actor_marker"
         }
     }
 }
