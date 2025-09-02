@@ -37,8 +37,7 @@ public class ItemRegistrar {
         Registry.register(Registries.ITEM_GROUP, TINYTACTICS_GROUP_KEY, TINYTACTICS_GROUP);
 
         ItemGroupEvents.modifyEntriesEvent(TINYTACTICS_GROUP_KEY).register((FabricItemGroupEntries e) -> {
-            ItemRegistrar.registerToItemGroup(e, TACTICS_RULER, BlockRegistrar.ACTOR_MARKER.asItem(),
-                    BlockRegistrar.TEST_BLOCK.asItem());
+            ItemRegistrar.registerToItemGroup(e, TACTICS_RULER, BlockRegistrar.ACTOR_MARKER.asItem());
         });
 
     }

@@ -44,7 +44,7 @@ public class ActorMarkerBlock extends BlockWithEntity {
             Map.entry(ActorMarkerRotationHelper.BACK, ActorMarkerInventory.ATTACHMENT_KEY));
 
     public static final IntProperty ROTATION = IntProperty.of("rotation", MIN_ROTATION_INDEX, MAX_ROTATION_INDEX);
-    public static final Property<DyeColor> COLOR = DyeColorProperty.of("color");
+    public static final Property<DyeColor> COLOR = DyeColorProperty.of("dye_color");
 
     private static final SoundEvent EQUIP_SOUND = SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value();
     private static final SoundEvent ROTATE_SOUND = SoundEvents.BLOCK_COMPARATOR_CLICK;
@@ -142,6 +142,15 @@ public class ActorMarkerBlock extends BlockWithEntity {
             }
         }
         return false;
+    }
+
+    protected boolean rotateActorMarker(boolean counterClockwise, BlockState state, World world, BlockPos pos,
+            PlayerEntity player, int localDirection) {
+        int newRotation = state.get(ROTATION) + (-1 * (localDirection + 4)) + (MAX_ROTATION_INDEX
+                + 1);
+        world.setBlockState(pos, state.with(ROTATION, (newRotation % (MAX_ROTATION_INDEX + 1))));
+        world.playSound(player, pos, ROTATE_SOUND, SoundCategory.BLOCKS);
+        return true;
     }
 
     @Override

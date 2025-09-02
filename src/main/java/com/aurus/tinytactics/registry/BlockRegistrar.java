@@ -3,7 +3,6 @@ package com.aurus.tinytactics.registry;
 import com.aurus.tinytactics.TinyTactics;
 import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerBlock;
 import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerBlockEntity;
-import com.aurus.tinytactics.blocks.test_block.TestBlock;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -22,9 +21,6 @@ public class BlockRegistrar {
 
     public static final BlockEntityType<ActorMarkerBlockEntity> ACTOR_MARKER_BLOCK_ENTITY = registerBlockEntity(
             "actor_marker", ActorMarkerBlockEntity::new, ACTOR_MARKER);
-
-    public static final Block TEST_BLOCK = registerBlock("test_block", new TestBlock(AbstractBlock.Settings.create()),
-            true);
 
     public static final Block[] SIMPLE_DYEABLE_BLOCKS = { ACTOR_MARKER };
 

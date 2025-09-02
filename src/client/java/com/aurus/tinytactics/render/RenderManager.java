@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Quaternionf;
+
 import com.aurus.tinytactics.data.RulerMap;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -72,11 +74,21 @@ public class RenderManager {
         return result;
     }
 
+    public static Vec3d blockPosToVec3d(BlockPos pos) {
+        return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+    }
+
     public static int setColorAlpha(int color, double alpha) {
         Color baseColor = new Color(color, true);
         Color newColor = new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(),
                 ((int) (alpha * 255)));
         return newColor.getRGB();
 
+    }
+
+    public static Quaternionf getQuaternionTo(Vec3d from, Vec3d to) {
+        Vec3d xyz = from.crossProduct(to);
+        float w = (float) (Math.sqrt((from.lengthSquared()) * (to.lengthSquared())) + from.dotProduct(to));
+        return new Quaternionf((float) xyz.getX(), (float) xyz.getY(), (float) xyz.getZ(), w).normalize();
     }
 }

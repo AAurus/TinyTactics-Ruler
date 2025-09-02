@@ -1,5 +1,6 @@
 package com.aurus.tinytactics.render.blocks;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerBlock;
@@ -7,9 +8,11 @@ import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerBlockEntity;
 import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerRotationHelper;
 import com.aurus.tinytactics.data.ActorMarkerInventory;
 import com.aurus.tinytactics.data.ItemAttachmentPosition;
+import com.aurus.tinytactics.render.RenderManager;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -17,7 +20,10 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.RotationAxis;
@@ -56,7 +62,10 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
             new EulerAngle(0, 180, 0), ModelTransformationMode.FIXED,
             ActorMarkerInventory.ATTACHMENT_KEY);
 
+    private BlockEntityRendererFactory.Context context;
+
     public ActorMarkerBlockRenderer(BlockEntityRendererFactory.Context context) {
+        this.context = context;
     }
 
     @Override
@@ -66,9 +75,15 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
         BlockPos pos = entity.getPos();
         BlockState state = entity.getCachedState();
 
+        Text name = entity.getComponents().get(DataComponentTypes.CUSTOM_NAME);
+        if (name != null) {
+            renderName(name, entity, state, matrices, vertexConsumers, light, overlay);
+        }
+
         matrices.push();
 
         rotateToLocal(matrices, state);
+
         MinecraftClient.getInstance().getBlockRenderManager().renderBlock(state, pos, world, matrices,
                 vertexConsumers.getBuffer(RenderLayers.getEntityBlockLayer(state, true)), false,
                 Random.create(0));
@@ -76,6 +91,29 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
         matrices.pop();
 
         renderItemAttachments(entity, tickDelta, matrices, vertexConsumers, light, overlay);
+    }
+
+    private void renderName(Text name, ActorMarkerBlockEntity entity, BlockState state, MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        matrices.push();
+        matrices.translate(0.5, 1.25, 0.5);
+
+        TextRenderer textRenderer = context.getTextRenderer();
+
+        float width = textRenderer.getWidth(name);
+
+        matrices.scale(1 / width, 1 / width, 1 / width);
+
+        matrices.multiply(MinecraftClient.getInstance().getEntityRenderDispatcher().getRotation());
+
+        matrices.scale(1, -1, -1);
+
+        textRenderer.draw(name, -width / 2, 0, 0xFFFFFF, false,
+                matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL,
+                (int) (MinecraftClient.getInstance().options.getTextBackgroundOpacity(0.25F)
+                        * 255.0F) << 24,
+                light);
+        matrices.pop();
     }
 
     public void renderItemAttachments(ActorMarkerBlockEntity entity, float tickDelta, MatrixStack matrices,

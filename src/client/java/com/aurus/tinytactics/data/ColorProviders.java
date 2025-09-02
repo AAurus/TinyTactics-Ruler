@@ -2,10 +2,10 @@ package com.aurus.tinytactics.data;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.aurus.tinytactics.TinyTactics;
 import com.aurus.tinytactics.registry.DataRegistrar;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
@@ -20,19 +20,28 @@ public class ColorProviders {
         return -1;
     }
 
-    public static int getBlockColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos pos,
+    public static int getBlockStateColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos pos,
             int tintIndex) {
-        TinyTactics.LOGGER.debug("hi!"); // doesn't send
         if (tintIndex == 0) {
-            if (state.getBlock().getStateManager().getProperty("color") instanceof DyeColorProperty prop) {
+            if (state.getBlock().getStateManager().getProperty("dye_color") instanceof DyeColorProperty prop) {
                 DyeColor color = ((DyeColor) state.get(prop));
-                TinyTactics.LOGGER.debug("this color is {}", color.getName()); // doesn't send either
-                return color.getEntityColor();
-            } else {
-                TinyTactics.LOGGER.debug("couldn't get color property :/"); // nor this
+                return color.getFireworkColor();
             }
         }
         return -1;
     }
 
+    public static int getBlockEntityColor(BlockState state, @Nullable BlockRenderView world, @Nullable BlockPos pos,
+            int tintIndex) {
+        if (tintIndex == 0) {
+            BlockEntity entity = world.getBlockEntity(pos);
+            if (entity != null) {
+                DyeColor color = entity.getComponents().get(DataRegistrar.DYE_COLOR);
+                if (color != null) {
+                    return color.getEntityColor();
+                }
+            }
+        }
+        return -1;
+    }
 }

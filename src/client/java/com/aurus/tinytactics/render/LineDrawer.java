@@ -19,14 +19,6 @@ import net.minecraft.util.math.Vec3d;
 
 public class LineDrawer {
 
-    public static void drawDebugLine(WorldRenderContext context) {
-        List<Vec3d> vec3ds = new ArrayList<>();
-        vec3ds.add(new Vec3d(0.5, 0.5, 0.5));
-        vec3ds.add(new Vec3d(0.5, 40.5, 40.5));
-        renderLinesInWorld(context, vec3ds,
-                0xFF0000FF, 5F);
-    }
-
     public static void renderQuadCrossLine(WorldRenderContext context, Vec3d pos1, Vec3d pos2, int color,
             double width) {
         List<Vec3d> vecs = createQuadCross(pos1, pos2, width);
@@ -97,17 +89,14 @@ public class LineDrawer {
             matrices.translate(-camera.getPos().x, -camera.getPos().y, -camera.getPos().z);
 
             for (Vec3d vec : finalVecs) {
-                // Vec3d camVec = RenderManager.transformToCameraSpace(vec, camera);
                 buffer.vertex(matrices.peek(), (float) vec.getX(), (float) vec.getY(), (float) vec.getZ()).color(color);
             }
 
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            // RenderSystem.depthMask(false);
             RenderSystem.disableCull();
             RenderSystem.enableDepthTest();
             RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-            // RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             BufferRenderer.drawWithGlobalProgram(buffer.end());
 

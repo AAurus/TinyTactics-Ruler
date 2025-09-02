@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 public class ActorMarkerBlockEntity extends BlockEntity {
@@ -63,7 +64,6 @@ public class ActorMarkerBlockEntity extends BlockEntity {
 
         NbtElement nbtItems = nbt.get("attachments");
         if (nbtItems != null) {
-
             items = ActorMarkerInventory.fromNbt(lookup,
                     nbtItems).orElse(ActorMarkerInventory.DEFAULT);
         }
@@ -73,4 +73,5 @@ public class ActorMarkerBlockEntity extends BlockEntity {
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup lookup) {
         return createNbt(lookup);
     }
+
 }

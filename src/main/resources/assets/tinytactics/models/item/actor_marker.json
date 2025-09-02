@@ -1,3 +1,7 @@
 {
-    "parent": "tinytactics:block/actor_marker"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tinytactics:item/actor_marker",
+    "layer1": "tinytactics:item/actor_marker_overlay"
+  }
 }

@@ -28,7 +28,8 @@ public class TinyTacticsClient implements ClientModInitializer {
         });
 
         ColorProviderRegistry.ITEM.register(ColorProviders::getItemColor, ItemRegistrar.SIMPLE_DYEABLE_ITEMS);
-        ColorProviderRegistry.BLOCK.register(ColorProviders::getBlockColor, BlockRegistrar.SIMPLE_DYEABLE_BLOCKS);
+        ColorProviderRegistry.BLOCK.register(ColorProviders::getBlockEntityColor,
+                BlockRegistrar.SIMPLE_DYEABLE_BLOCKS);
 
         BlockEntityRendererFactories.register(BlockRegistrar.ACTOR_MARKER_BLOCK_ENTITY, ActorMarkerBlockRenderer::new);
     }
