@@ -20,7 +20,7 @@ import net.minecraft.util.math.Vec3d;
 public class ConeDrawer {
 
     public static void renderDebugCone(WorldRenderContext context) {
-        renderCone(context, new Vec3d(0.5, 2.5, 0.5), 10, 3, new Vec3d(1, 0, 0), 0x440000FF);
+        renderCone(context, new Vec3d(0.5, 2.5, 0.5), 10, 3, new Vec3d(1, 1, 1), 0x440000FF);
     }
 
     public static void renderCone(WorldRenderContext context, Vec3d tipPos, double length, double diameter,
