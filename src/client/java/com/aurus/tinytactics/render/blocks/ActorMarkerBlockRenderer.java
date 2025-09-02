@@ -1,6 +1,5 @@
 package com.aurus.tinytactics.render.blocks;
 
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerBlock;
@@ -8,7 +7,6 @@ import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerBlockEntity;
 import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerRotationHelper;
 import com.aurus.tinytactics.data.ActorMarkerInventory;
 import com.aurus.tinytactics.data.ItemAttachmentPosition;
-import com.aurus.tinytactics.render.RenderManager;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -21,7 +19,6 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;

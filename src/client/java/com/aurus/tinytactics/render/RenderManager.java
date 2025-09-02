@@ -59,6 +59,8 @@ public class RenderManager {
 
                 }
             }
+
+            ConeDrawer.renderDebugCone(context);
         });
     }
 
