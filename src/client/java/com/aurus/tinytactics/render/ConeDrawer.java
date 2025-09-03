@@ -3,13 +3,10 @@ package com.aurus.tinytactics.render;
 import java.util.List;
 import java.util.Objects;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;

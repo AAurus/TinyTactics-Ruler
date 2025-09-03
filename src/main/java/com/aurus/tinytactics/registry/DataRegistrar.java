@@ -4,6 +4,7 @@ import com.aurus.tinytactics.TinyTactics;
 import com.aurus.tinytactics.data.ActorMarkerInventory;
 import com.aurus.tinytactics.data.RulerMap;
 import com.aurus.tinytactics.data.RulerMapPayload;
+import com.aurus.tinytactics.data.ShapeType;
 import com.aurus.tinytactics.recipes.SimpleDyeRecipe;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -30,6 +31,10 @@ public class DataRegistrar {
             Registries.DATA_COMPONENT_TYPE,
             Identifier.of(TinyTactics.MOD_ID, "dye_color"),
             ComponentType.<DyeColor>builder().codec(DyeColor.CODEC).build());
+
+    public static final ComponentType<ShapeType> SHAPE_TYPE = Registry.register(Registries.DATA_COMPONENT_TYPE,
+            Identifier.of(TinyTactics.MOD_ID, "shape_type"),
+            ComponentType.<ShapeType>builder().codec(ShapeType.CODEC).build());
 
     public static final ComponentType<ActorMarkerInventory> ACTOR_MARKER_INVENTORY = Registry.register(
             Registries.DATA_COMPONENT_TYPE, Identifier.of(TinyTactics.MOD_ID, "actor_marker_inventory"),
