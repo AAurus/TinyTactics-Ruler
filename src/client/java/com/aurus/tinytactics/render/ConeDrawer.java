@@ -1,6 +1,5 @@
 package com.aurus.tinytactics.render;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,11 +54,7 @@ public class ConeDrawer {
         buffer.vertex(matrices.peek(), (float) finalVec.getX(), (float) finalVec.getY(), (float) finalVec.getZ())
                 .color(color);
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableCull();
-        RenderSystem.enableDepthTest();
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+        RenderUtils.setRenderPreferences();
 
         BufferRenderer.drawWithGlobalProgram(buffer.end());
 
@@ -79,11 +74,7 @@ public class ConeDrawer {
             buffer.vertex(matrices.peek(), (float) vec.getX(), (float) vec.getY(), (float) vec.getZ()).color(color);
         }
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableCull();
-        RenderSystem.enableDepthTest();
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+        RenderUtils.setRenderPreferences();
 
         BufferRenderer.drawWithGlobalProgram(buffer.end());
 

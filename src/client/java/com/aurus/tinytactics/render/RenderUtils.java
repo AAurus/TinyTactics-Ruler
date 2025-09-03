@@ -6,7 +6,6 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.Vec3d;
 
 public abstract class RenderUtils {
