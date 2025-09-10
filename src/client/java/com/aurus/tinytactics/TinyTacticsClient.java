@@ -1,8 +1,8 @@
 package com.aurus.tinytactics;
 
 import com.aurus.tinytactics.data.ColorProviders;
-import com.aurus.tinytactics.data.RulerMap;
-import com.aurus.tinytactics.data.RulerMapPayload;
+import com.aurus.tinytactics.data.TacticsRulerMap;
+import com.aurus.tinytactics.data.TacticsRulerMapPayload;
 import com.aurus.tinytactics.render.RenderManager;
 import com.aurus.tinytactics.render.blocks.ActorMarkerBlockRenderer;
 import com.aurus.tinytactics.registry.BlockRegistrar;
@@ -21,7 +21,8 @@ public class TinyTacticsClient implements ClientModInitializer {
     public void onInitializeClient() {
         RenderManager.getManager().init();
 
-        ClientPlayNetworking.registerGlobalReceiver(RulerMapPayload.ID, TinyTacticsClient::receiveRulerMapPacket);
+        ClientPlayNetworking.registerGlobalReceiver(TacticsRulerMapPayload.ID,
+                TinyTacticsClient::receiveRulerMapPacket);
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             ServerHandler.broadcastPositions();
@@ -34,14 +35,14 @@ public class TinyTacticsClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(BlockRegistrar.ACTOR_MARKER_BLOCK_ENTITY, ActorMarkerBlockRenderer::new);
     }
 
-    public static void receiveRulerMapPacket(RulerMapPayload payload, ClientPlayNetworking.Context context) {
+    public static void receiveRulerMapPacket(TacticsRulerMapPayload payload, ClientPlayNetworking.Context context) {
         ClientWorld world = context.client().world;
 
         if (world == null) {
             return;
         }
 
-        RulerMap map = payload.map();
+        TacticsRulerMap map = payload.map();
         RenderManager.getManager().updateMap(map);
 
         TinyTactics.LOGGER.info("Positions Received");

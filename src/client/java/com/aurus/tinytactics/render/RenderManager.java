@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.joml.Quaternionf;
 
-import com.aurus.tinytactics.data.RulerMap;
+import com.aurus.tinytactics.data.TacticsRulerMap;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +17,7 @@ import java.awt.Color;
 
 public class RenderManager {
 
-    private RulerMap map;
+    private TacticsRulerMap map;
 
     private static RenderManager manager;
 
@@ -28,7 +28,7 @@ public class RenderManager {
     private static final float CORNER_RULER_LINE_WIDTH = 0.02F;
 
     private RenderManager() {
-        map = RulerMap.DEFAULT;
+        map = TacticsRulerMap.DEFAULT;
     }
 
     public static RenderManager getManager() {
@@ -64,7 +64,7 @@ public class RenderManager {
         });
     }
 
-    public void updateMap(RulerMap map) {
+    public void updateMap(TacticsRulerMap map) {
         this.map = map;
     }
 

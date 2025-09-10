@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.aurus.tinytactics.data.RulerMap;
-import com.aurus.tinytactics.data.RulerMapPayload;
+import com.aurus.tinytactics.data.TacticsRulerMap;
+import com.aurus.tinytactics.data.TacticsRulerMapPayload;
 import com.aurus.tinytactics.registry.DataRegistrar;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
@@ -33,8 +33,8 @@ public class ServerHandler {
 
         for (ServerWorld world : currentServerWorlds) {
 
-            RulerMapPayload payload = new RulerMapPayload(
-                    world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS, () -> RulerMap.DEFAULT));
+            TacticsRulerMapPayload payload = new TacticsRulerMapPayload(
+                    world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS, () -> TacticsRulerMap.DEFAULT));
 
             Collection<ServerPlayerEntity> players = PlayerLookup.world(world);
             numPlayers += players.size();
@@ -48,7 +48,7 @@ public class ServerHandler {
         TinyTactics.LOGGER.info("Positions broadcasted to " + numPlayers + " players");
     }
 
-    public static void setPositions(World world, RulerMap newMap) {
+    public static void setPositions(World world, TacticsRulerMap newMap) {
         world.setAttached(DataRegistrar.ALL_RULER_POSITIONS, newMap);
     }
 

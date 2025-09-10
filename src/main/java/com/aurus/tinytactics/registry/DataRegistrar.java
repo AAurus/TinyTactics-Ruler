@@ -2,9 +2,9 @@ package com.aurus.tinytactics.registry;
 
 import com.aurus.tinytactics.TinyTactics;
 import com.aurus.tinytactics.data.ActorMarkerInventory;
-import com.aurus.tinytactics.data.RulerMap;
-import com.aurus.tinytactics.data.RulerMapPayload;
-import com.aurus.tinytactics.data.ShapeType;
+import com.aurus.tinytactics.data.TacticsRulerMap;
+import com.aurus.tinytactics.data.TacticsRulerMapPayload;
+import com.aurus.tinytactics.data.TacticsShape;
 import com.aurus.tinytactics.recipes.SimpleDyeRecipe;
 import com.mojang.serialization.Codec;
 
@@ -25,13 +25,14 @@ import net.minecraft.util.dynamic.Codecs;
 public class DataRegistrar {
 
     public static void registerAll() {
-        PayloadTypeRegistry.playS2C().register(RulerMapPayload.ID, RulerMapPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(TacticsRulerMapPayload.ID, TacticsRulerMapPayload.CODEC);
         registerRecipeSubtype(SimpleDyeRecipe.Type.INSTANCE, SimpleDyeRecipe.Serializer.INSTANCE, SimpleDyeRecipe.ID);
     }
 
     public static final ComponentType<DyeColor> DYE_COLOR = registerComponentType("dye_color", DyeColor.CODEC);
 
-    public static final ComponentType<ShapeType> SHAPE_TYPE = registerComponentType("shape_type", ShapeType.CODEC);
+    public static final ComponentType<TacticsShape.Type> SHAPE_TYPE = registerComponentType("shape_type",
+            TacticsShape.Type.CODEC);
 
     public static final ComponentType<Integer> SHAPE_LENGTH = registerComponentType("shape_length",
             Codecs.POSITIVE_INT);
@@ -43,10 +44,10 @@ public class DataRegistrar {
             Registries.DATA_COMPONENT_TYPE, Identifier.of(TinyTactics.MOD_ID, "actor_marker_inventory"),
             ComponentType.<ActorMarkerInventory>builder().codec(ActorMarkerInventory.CODEC).build());
 
-    public static final AttachmentType<RulerMap> ALL_RULER_POSITIONS = AttachmentRegistry.create(
+    public static final AttachmentType<TacticsRulerMap> ALL_RULER_POSITIONS = AttachmentRegistry.create(
             Identifier.of(TinyTactics.MOD_ID, "all_ruler_positions"),
-            builder -> builder.initializer(() -> RulerMap.DEFAULT).persistent(RulerMap.CODEC)
-                    .syncWith(RulerMap.PACKET_CODEC, AttachmentSyncPredicate.all()));
+            builder -> builder.initializer(() -> TacticsRulerMap.DEFAULT).persistent(TacticsRulerMap.CODEC)
+                    .syncWith(TacticsRulerMap.PACKET_CODEC, AttachmentSyncPredicate.all()));
 
     public static <T extends Recipe<?>> void registerRecipeSubtype(RecipeType<T> type, RecipeSerializer<T> serializer,
             String id) {

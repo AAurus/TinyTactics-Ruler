@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import com.aurus.tinytactics.ServerHandler;
-import com.aurus.tinytactics.data.RulerMap;
+import com.aurus.tinytactics.data.TacticsRulerMap;
 import com.aurus.tinytactics.registry.DataRegistrar;
 
 public class TacticsRuler extends Item {
@@ -37,7 +37,8 @@ public class TacticsRuler extends Item {
 
     private ActionResult addPoint(World world, DyeColor color, BlockPos pos) {
 
-        RulerMap currentPos = world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS, () -> RulerMap.DEFAULT);
+        TacticsRulerMap currentPos = world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS,
+                () -> TacticsRulerMap.DEFAULT);
         ServerHandler.setPositions(world, currentPos.add(player.getUuid(), color, pos));
 
         ServerHandler.broadcastPositions();
@@ -51,7 +52,8 @@ public class TacticsRuler extends Item {
             return ActionResult.FAIL;
         }
 
-        RulerMap currentPos = world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS, () -> RulerMap.DEFAULT);
+        TacticsRulerMap currentPos = world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS,
+                () -> TacticsRulerMap.DEFAULT);
         ServerHandler.setPositions(world, currentPos.clearColor(player.getUuid(), color));
 
         ServerHandler.broadcastPositions();
