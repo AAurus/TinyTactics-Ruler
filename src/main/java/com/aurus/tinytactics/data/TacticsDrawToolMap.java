@@ -1,12 +1,8 @@
 package com.aurus.tinytactics.data;
 
-import com.aurus.tinytactics.data.TacticsShape.Type;
 import com.aurus.tinytactics.util.Collection;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,7 +14,6 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Uuids;
-import net.minecraft.util.math.BlockPos;
 
 public class TacticsDrawToolMap<T> {
     protected final Map<UUID, Map<DyeColor, Collection<T>>> map;
