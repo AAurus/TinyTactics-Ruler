@@ -32,12 +32,13 @@ public class TacticsRuler extends Item {
         if (player.isSneaking()) {
             return clearPoints(world, color);
         }
+
         return addPoint(world, color, context.getBlockPos());
     }
 
     private ActionResult addPoint(World world, DyeColor color, BlockPos pos) {
 
-        TacticsRulerMap currentPos = world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS,
+        TacticsRulerMap currentPos = world.getAttachedOrCreate(DataRegistrar.TACTICS_RULER_POSITIONS,
                 () -> TacticsRulerMap.DEFAULT);
         ServerHandler.setPositions(world, currentPos.add(player.getUuid(), color, pos));
 
@@ -52,7 +53,7 @@ public class TacticsRuler extends Item {
             return ActionResult.FAIL;
         }
 
-        TacticsRulerMap currentPos = world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS,
+        TacticsRulerMap currentPos = world.getAttachedOrCreate(DataRegistrar.TACTICS_RULER_POSITIONS,
                 () -> TacticsRulerMap.DEFAULT);
         ServerHandler.setPositions(world, currentPos.clearColor(player.getUuid(), color));
 

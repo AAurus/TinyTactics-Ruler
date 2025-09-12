@@ -5,65 +5,54 @@ import com.aurus.tinytactics.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Uuids;
 
-public class TacticsDrawToolMap<T> {
-    protected final Map<UUID, Map<DyeColor, Collection<T>>> map;
-    protected final Collection<T> empty;
+public abstract class TacticsDrawToolMap<T, C extends Collection<T>> {
+    protected final Map<UUID, Map<DyeColor, C>> map;
+    protected final C empty;
 
-    public TacticsDrawToolMap(Map<UUID, Map<DyeColor, Collection<T>>> map, Collection<T> empty) {
+    public TacticsDrawToolMap(Map<UUID, Map<DyeColor, C>> map, C empty) {
         this.map = map;
         this.empty = empty;
     }
 
-    public Map<UUID, Map<DyeColor, Collection<T>>> getFullMap() {
+    public TacticsDrawToolMap(C empty) {
+        this.map = new HashMap<>();
+        this.empty = empty;
+    }
+
+    public Map<UUID, Map<DyeColor, C>> getFullMap() {
         return map;
     }
 
-    public TacticsDrawToolMap<T> add(UUID user, DyeColor color, T value) {
-        Collection<T> collection = map.getOrDefault(user, new HashMap<>()).getOrDefault(color,
-                empty);
-        Collection<T> newCollection = collection.add(value);
-        Map<DyeColor, Collection<T>> newUserMap = new HashMap<>(map.getOrDefault(user, new HashMap<>()));
+    public C getEmpty() {
+        return empty;
+    }
+
+    public Map<UUID, Map<DyeColor, C>> mapAdd(UUID user, DyeColor color, T value) {
+        C collection = map.getOrDefault(user, new HashMap<>())
+                .getOrDefault(color, empty);
+        C newCollection = (C) collection.add(value);
+        Map<DyeColor, C> newUserMap = new HashMap<>(map.getOrDefault(user, new HashMap<>()));
         newUserMap.put(color, newCollection);
-        Map<UUID, Map<DyeColor, Collection<T>>> newMap = new HashMap<>(map);
+        Map<UUID, Map<DyeColor, C>> newMap = new HashMap<>(map);
         newMap.put(user, newUserMap);
-        return new TacticsDrawToolMap<>(newMap, empty);
+        return newMap;
     }
 
-    public TacticsDrawToolMap<T> clearPlayer(UUID user) {
-        Map<UUID, Map<DyeColor, Collection<T>>> newMap = new HashMap<>(map);
+    public Map<UUID, Map<DyeColor, C>> mapClearPlayer(UUID user) {
+        Map<UUID, Map<DyeColor, C>> newMap = new HashMap<>(map);
         newMap.put(user, new HashMap<>());
-        return new TacticsDrawToolMap<>(newMap, empty);
+        return newMap;
     }
 
-    public TacticsDrawToolMap<T> clearColor(UUID user, DyeColor color) {
-        Map<DyeColor, Collection<T>> userMap = map.get(user);
-        Map<DyeColor, Collection<T>> newUserMap = new HashMap<>(userMap);
+    public Map<UUID, Map<DyeColor, C>> mapClearColor(UUID user, DyeColor color) {
+        Map<DyeColor, C> userMap = map.get(user);
+        Map<DyeColor, C> newUserMap = new HashMap<>(userMap);
         newUserMap.put(color, empty);
-        Map<UUID, Map<DyeColor, Collection<T>>> newMap = new HashMap<>(map);
+        Map<UUID, Map<DyeColor, C>> newMap = new HashMap<>(map);
         newMap.put(user, newUserMap);
-        return new TacticsDrawToolMap<>(newMap, empty);
+        return newMap;
     }
 
-    public Codec<TacticsDrawToolMap<T>> getCodec(String fieldName, Codec<Collection<T>> collectionCodec) {
-        return RecordCodecBuilder.create(instance -> instance
-                .group(Codec.unboundedMap(Uuids.CODEC, Codec.unboundedMap(DyeColor.CODEC, collectionCodec))
-                        .fieldOf(fieldName)
-                        .forGetter(TacticsDrawToolMap::getFullMap),
-                        collectionCodec.fieldOf("empty").forGetter(null))
-                .apply(instance, TacticsDrawToolMap::new));
-    }
-
-    public PacketCodec<ByteBuf, TacticsDrawToolMap<T>> getPacketCodec(Codec<TacticsDrawToolMap<T>> codec) {
-        return PacketCodecs.codec(codec);
-    }
 }

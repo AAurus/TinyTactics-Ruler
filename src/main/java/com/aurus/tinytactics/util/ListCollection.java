@@ -3,6 +3,9 @@ package com.aurus.tinytactics.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 public class ListCollection<T> extends Collection<T> {
 
     private List<T> list;
@@ -13,6 +16,10 @@ public class ListCollection<T> extends Collection<T> {
 
     public ListCollection() {
         this.list = new ArrayList<>();
+    }
+
+    public List<T> getEntries() {
+        return list;
     }
 
     @Override
@@ -36,6 +43,12 @@ public class ListCollection<T> extends Collection<T> {
             }
         }
         return this;
+    }
+
+    public Codec<ListCollection<T>> getCodec(Codec<T> elementCodec) {
+        return RecordCodecBuilder.create(instance -> instance
+                .group(elementCodec.listOf().fieldOf("entries").forGetter(ListCollection::getEntries))
+                .apply(instance, ListCollection::new));
     }
 
 }

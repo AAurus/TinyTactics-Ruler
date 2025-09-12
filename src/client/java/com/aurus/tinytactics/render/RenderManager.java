@@ -7,6 +7,7 @@ import java.util.Map;
 import org.joml.Quaternionf;
 
 import com.aurus.tinytactics.data.TacticsRulerMap;
+import com.aurus.tinytactics.util.ListCollection;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.util.math.BlockPos;
@@ -40,10 +41,10 @@ public class RenderManager {
 
     public void init() {
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
-            for (Map<DyeColor, List<BlockPos>> userMap : map.getFullMap().values()) {
+            for (Map<DyeColor, ListCollection<BlockPos>> userMap : map.getFullMap().values()) {
                 for (DyeColor color : userMap.keySet()) {
 
-                    List<BlockPos> list = userMap.get(color);
+                    List<BlockPos> list = userMap.get(color).getEntries();
                     List<Vec3d> vecs = blockPosToVec3ds(list);
 
                     if (vecs.size() >= 2) {

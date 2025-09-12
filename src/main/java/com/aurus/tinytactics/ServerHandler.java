@@ -34,7 +34,7 @@ public class ServerHandler {
         for (ServerWorld world : currentServerWorlds) {
 
             TacticsRulerMapPayload payload = new TacticsRulerMapPayload(
-                    world.getAttachedOrCreate(DataRegistrar.ALL_RULER_POSITIONS, () -> TacticsRulerMap.DEFAULT));
+                    world.getAttachedOrCreate(DataRegistrar.TACTICS_RULER_POSITIONS, () -> TacticsRulerMap.DEFAULT));
 
             Collection<ServerPlayerEntity> players = PlayerLookup.world(world);
             numPlayers += players.size();
@@ -49,7 +49,7 @@ public class ServerHandler {
     }
 
     public static void setPositions(World world, TacticsRulerMap newMap) {
-        world.setAttached(DataRegistrar.ALL_RULER_POSITIONS, newMap);
+        world.setAttached(DataRegistrar.TACTICS_RULER_POSITIONS, newMap);
     }
 
 }

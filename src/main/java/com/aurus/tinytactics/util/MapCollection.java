@@ -1,19 +1,44 @@
 package com.aurus.tinytactics.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class MapCollection<K, V> extends Collection<Entry<K, V>> {
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+public class MapCollection<K, V> extends Collection<Pair<K, V>> {
 
     private Map<K, V> map;
 
-    private MapCollection(Map<K, V> map) {
+    public MapCollection(Map<K, V> map) {
         this.map = map;
     }
 
     public MapCollection() {
         this.map = new HashMap<>();
+    }
+
+    public MapCollection(List<Pair<K, V>> pairs) {
+        this.map = new HashMap<>();
+        for (Pair<K, V> p : pairs) {
+            this.map.put(p.getFirst(), p.getSecond());
+        }
+    }
+
+    public Map<K, V> getEntries() {
+        return this.map;
+    }
+
+    public List<Pair<K, V>> getPairs() {
+        List<Pair<K, V>> result = new ArrayList<>();
+        for (Entry<K, V> e : map.entrySet()) {
+            result.add(new Pair<K, V>(e.getKey(), e.getValue()));
+        }
+        return result;
     }
 
     @Override
@@ -40,21 +65,21 @@ public class MapCollection<K, V> extends Collection<Entry<K, V>> {
     }
 
     @Override
-    public Collection<Entry<K, V>> add(Entry<K, V> value) {
-        return this.add(value.getKey(), value.getValue());
+    public Collection<Pair<K, V>> add(Pair<K, V> value) {
+        return this.add(value.getFirst(), value.getSecond());
     }
 
     @Override
-    public Collection<Entry<K, V>> remove(Object o) {
-        if (o instanceof Entry entry) {
+    public Collection<Pair<K, V>> remove(Object o) {
+        if (o instanceof Pair pair) {
             HashMap<K, V> newMap = new HashMap<>(map);
             boolean successFlag = false;
-            if (entry.getValue() == null) {
-                successFlag = (newMap.remove(entry.getKey()) != null);
-            } else if (entry.getKey() == null) {
-                successFlag = newMap.values().remove(entry.getValue());
+            if (pair.getSecond() == null) {
+                successFlag = (newMap.remove(pair.getFirst()) != null);
+            } else if (pair.getFirst() == null) {
+                successFlag = newMap.values().remove(pair.getSecond());
             } else {
-                successFlag = (newMap.remove(entry.getKey(), entry.getValue()));
+                successFlag = (newMap.remove(pair.getFirst(), pair.getSecond()));
             }
 
             if (successFlag) {
@@ -62,6 +87,19 @@ public class MapCollection<K, V> extends Collection<Entry<K, V>> {
             }
         }
         return this;
+    }
+
+    public Codec<MapCollection<K, V>> getCodec(Codec<K> keyCodec, Codec<V> valueCodec) {
+        return RecordCodecBuilder.create(instance -> instance
+                .group(Codec.unboundedMap(keyCodec, valueCodec)
+                        .fieldOf("entries")
+                        .forGetter(MapCollection::getEntries))
+                .apply(instance, MapCollection::new));
+    }
+
+    public Codec<?> getCodec(Codec<Pair<K, V>> elementCodec) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCodec'");
     }
 
 }

@@ -44,8 +44,8 @@ public class DataRegistrar {
             Registries.DATA_COMPONENT_TYPE, Identifier.of(TinyTactics.MOD_ID, "actor_marker_inventory"),
             ComponentType.<ActorMarkerInventory>builder().codec(ActorMarkerInventory.CODEC).build());
 
-    public static final AttachmentType<TacticsRulerMap> ALL_RULER_POSITIONS = AttachmentRegistry.create(
-            Identifier.of(TinyTactics.MOD_ID, "all_ruler_positions"),
+    public static final AttachmentType<TacticsRulerMap> TACTICS_RULER_POSITIONS = AttachmentRegistry.create(
+            Identifier.of(TinyTactics.MOD_ID, "tactics_ruler_positions"),
             builder -> builder.initializer(() -> TacticsRulerMap.DEFAULT).persistent(TacticsRulerMap.CODEC)
                     .syncWith(TacticsRulerMap.PACKET_CODEC, AttachmentSyncPredicate.all()));
 
