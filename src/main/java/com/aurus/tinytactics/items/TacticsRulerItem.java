@@ -1,10 +1,12 @@
 package com.aurus.tinytactics.items;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -12,10 +14,10 @@ import com.aurus.tinytactics.ServerHandler;
 import com.aurus.tinytactics.data.TacticsRulerMap;
 import com.aurus.tinytactics.registry.DataRegistrar;
 
-public class TacticsRuler extends Item {
+public class TacticsRulerItem extends Item {
     PlayerEntity player;
 
-    public TacticsRuler() {
+    public TacticsRulerItem() {
         super(new Item.Settings().maxCount(1).component(DataRegistrar.DYE_COLOR, DyeColor.WHITE));
     }
 
@@ -29,11 +31,15 @@ public class TacticsRuler extends Item {
         World world = context.getWorld();
         DyeColor color = context.getStack().get(DataRegistrar.DYE_COLOR);
 
-        if (player.isSneaking()) {
-            return clearPoints(world, color);
-        }
-
         return addPoint(world, color, context.getBlockPos());
+    }
+
+    @Override
+    public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) {
+        if (!world.isClient) {
+            this.clearPoints(world, miner.getStackInHand(Hand.MAIN_HAND).get(DataRegistrar.DYE_COLOR));
+        }
+        return false;
     }
 
     private ActionResult addPoint(World world, DyeColor color, BlockPos pos) {

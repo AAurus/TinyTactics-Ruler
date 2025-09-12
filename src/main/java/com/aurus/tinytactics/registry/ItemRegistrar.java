@@ -1,7 +1,7 @@
 package com.aurus.tinytactics.registry;
 
 import com.aurus.tinytactics.TinyTactics;
-import com.aurus.tinytactics.items.TacticsRuler;
+import com.aurus.tinytactics.items.TacticsRulerItem;
 
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -21,7 +21,7 @@ public class ItemRegistrar {
     public static final RegistryKey<ItemGroup> TINYTACTICS_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),
             Identifier.of(TinyTactics.MOD_ID, "tinytactics_group"));
 
-    public static final Item TACTICS_RULER = new TacticsRuler();
+    public static final Item TACTICS_RULER = new TacticsRulerItem();
 
     public static final Item[] SIMPLE_DYEABLE_ITEMS = { TACTICS_RULER };
 

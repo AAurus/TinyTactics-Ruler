@@ -13,9 +13,9 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TacticsShapeDrawer extends Item {
+public class TacticsShapeDrawerItem extends Item {
 
-    public TacticsShapeDrawer() {
+    public TacticsShapeDrawerItem() {
         super(new Settings().maxCount(1)
                 .component(DataRegistrar.DYE_COLOR, DyeColor.WHITE)
                 .component(DataRegistrar.SHAPE_TYPE, TacticsShape.Type.LINE)
