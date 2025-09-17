@@ -53,6 +53,19 @@ public class TacticsShape {
         this.diameter = diameter;
     }
 
+    public TacticsShape(Type type, BlockPos origin, BlockPos destination, double length, double diameter) {
+        this.type = type;
+        this.origin = origin;
+        this.direction = faceDirection(origin, destination);
+        this.length = length;
+        this.diameter = diameter;
+    }
+
+    public Vec3d faceDirection(BlockPos origin, BlockPos destination) {
+        return new Vec3d(destination.getX() - origin.getX(), destination.getY() - origin.getY(),
+                destination.getZ() - origin.getZ()).normalize();
+    }
+
     public static enum Type implements StringIdentifiable {
         LINE,
         SPHERE,

@@ -48,7 +48,7 @@ public class TacticsRulerItem extends Item {
                 () -> TacticsRulerMap.DEFAULT);
         ServerHandler.setPositions(world, currentPos.add(player.getUuid(), color, pos));
 
-        ServerHandler.broadcastPositions();
+        ServerHandler.broadcastRulerData();
 
         return ActionResult.SUCCESS;
     }
@@ -63,7 +63,7 @@ public class TacticsRulerItem extends Item {
                 () -> TacticsRulerMap.DEFAULT);
         ServerHandler.setPositions(world, currentPos.clearColor(player.getUuid(), color));
 
-        ServerHandler.broadcastPositions();
+        ServerHandler.broadcastRulerData();
 
         return ActionResult.SUCCESS;
     }

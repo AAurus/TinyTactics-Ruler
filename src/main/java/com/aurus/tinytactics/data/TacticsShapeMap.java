@@ -9,6 +9,9 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Uuids;
 
@@ -18,7 +21,7 @@ public class TacticsShapeMap extends
     public static final TacticsShapeMap DEFAULT = new TacticsShapeMap(new HashMap<>());
     public static final MapCollection<TacticsShape.Type, TacticsShape> EMPTY = new MapCollection<>();
 
-    public static final Codec<TacticsDrawToolMap<Pair<TacticsShape.Type, TacticsShape>, MapCollection<TacticsShape.Type, TacticsShape>>> CODEC = RecordCodecBuilder
+    public static final Codec<TacticsShapeMap> CODEC = RecordCodecBuilder
             .create(instance -> instance
                     .group(Codec
                             .unboundedMap(Uuids.CODEC,
@@ -29,6 +32,7 @@ public class TacticsShapeMap extends
                             EMPTY.getCodec(TacticsShape.Type.CODEC, TacticsShape.CODEC).fieldOf("empty")
                                     .forGetter(TacticsDrawToolMap::getEmpty))
                     .apply(instance, TacticsShapeMap::new));
+    public static final PacketCodec<ByteBuf, TacticsShapeMap> PACKET_CODEC = PacketCodecs.codec(CODEC);
 
     public TacticsShapeMap(Map<UUID, Map<DyeColor, MapCollection<TacticsShape.Type, TacticsShape>>> map,
             MapCollection<TacticsShape.Type, TacticsShape> empty) {

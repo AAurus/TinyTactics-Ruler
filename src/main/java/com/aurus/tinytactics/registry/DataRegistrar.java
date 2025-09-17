@@ -5,6 +5,8 @@ import com.aurus.tinytactics.data.ActorMarkerInventory;
 import com.aurus.tinytactics.data.TacticsRulerMap;
 import com.aurus.tinytactics.data.TacticsRulerMapPayload;
 import com.aurus.tinytactics.data.TacticsShape;
+import com.aurus.tinytactics.data.TacticsShapeMap;
+import com.aurus.tinytactics.items.TacticsShapeDrawerItem;
 import com.aurus.tinytactics.recipes.SimpleDyeRecipe;
 import com.mojang.serialization.Codec;
 
@@ -40,14 +42,24 @@ public class DataRegistrar {
     public static final ComponentType<Integer> SHAPE_DIAMETER = registerComponentType("shape_diameter",
             Codecs.POSITIVE_INT);
 
+    public static final ComponentType<TacticsShapeDrawerItem.Mode> SHAPE_DRAWER_MODE = registerComponentType(
+            "settings_mode", TacticsShapeDrawerItem.Mode.CODEC);
+
     public static final ComponentType<ActorMarkerInventory> ACTOR_MARKER_INVENTORY = Registry.register(
             Registries.DATA_COMPONENT_TYPE, Identifier.of(TinyTactics.MOD_ID, "actor_marker_inventory"),
             ComponentType.<ActorMarkerInventory>builder().codec(ActorMarkerInventory.CODEC).build());
 
     public static final AttachmentType<TacticsRulerMap> TACTICS_RULER_POSITIONS = AttachmentRegistry.create(
             Identifier.of(TinyTactics.MOD_ID, "tactics_ruler_positions"),
-            builder -> builder.initializer(() -> TacticsRulerMap.DEFAULT).persistent(TacticsRulerMap.CODEC)
+            builder -> builder.initializer(() -> TacticsRulerMap.DEFAULT)
+                    .persistent(TacticsRulerMap.CODEC)
                     .syncWith(TacticsRulerMap.PACKET_CODEC, AttachmentSyncPredicate.all()));
+
+    public static final AttachmentType<TacticsShapeMap> TACTICS_SHAPES = AttachmentRegistry.create(
+            Identifier.of(TinyTactics.MOD_ID, "tactics_shapes"),
+            builder -> builder.initializer(() -> TacticsShapeMap.DEFAULT)
+                    .persistent(TacticsShapeMap.CODEC)
+                    .syncWith(TacticsShapeMap.PACKET_CODEC, AttachmentSyncPredicate.all()));
 
     public static <T extends Recipe<?>> void registerRecipeSubtype(RecipeType<T> type, RecipeSerializer<T> serializer,
             String id) {

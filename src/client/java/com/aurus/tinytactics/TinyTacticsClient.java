@@ -25,7 +25,7 @@ public class TinyTacticsClient implements ClientModInitializer {
                 TinyTacticsClient::receiveRulerMapPacket);
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            ServerHandler.broadcastPositions();
+            ServerHandler.broadcastRulerData();
         });
 
         ColorProviderRegistry.ITEM.register(ColorProviders::getItemColor, ItemRegistrar.SIMPLE_DYEABLE_ITEMS);
