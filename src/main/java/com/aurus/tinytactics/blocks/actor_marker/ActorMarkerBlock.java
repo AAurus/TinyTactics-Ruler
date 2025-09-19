@@ -52,7 +52,7 @@ public class ActorMarkerBlock extends BlockWithEntity {
     private static final VoxelShape OUTLINE_SHAPE = Block.createCuboidShape(1.0, 1.0, 1.0, 15.0, 15.0, 15.0);
 
     public ActorMarkerBlock(Settings settings) {
-        super(settings);
+        super(settings.nonOpaque().noCollision());
         setDefaultState(getDefaultState().with(ROTATION, 0).with(COLOR, DyeColor.WHITE));
     }
 

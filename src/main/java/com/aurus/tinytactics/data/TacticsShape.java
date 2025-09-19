@@ -1,9 +1,16 @@
 package com.aurus.tinytactics.data;
 
+import java.util.function.IntFunction;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.function.ValueLists;
+import net.minecraft.util.function.ValueLists.OutOfBoundsHandling;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -67,20 +74,46 @@ public class TacticsShape {
     }
 
     public static enum Type implements StringIdentifiable {
-        LINE,
-        SPHERE,
-        CONE,
-        CHAIN;
+        LINE(0, "line"),
+        SPHERE(1, "sphere"),
+        CONE(2, "cone"),
+        CHAIN(3, "chain");
+
+        private int id;
+        private String name;
+
+        private static final IntFunction<Type> BY_ID = ValueLists.createIdToValueFunction(Type::getId, values(),
+                OutOfBoundsHandling.ZERO);
+
+        private Type(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
 
         public static final Codec<TacticsShape.Type> CODEC = StringIdentifiable.createCodec(TacticsShape.Type::values);
 
+        public int getId() {
+            return this.id;
+        }
+
+        public static Type byId(int id) {
+            return (Type) BY_ID.apply(id);
+        }
+
         public String toString() {
-            return this.name().toLowerCase();
+            return this.name;
         }
 
         @Override
         public String asString() {
-            return this.toString();
+            return this.name;
+        }
+
+        @Nullable
+        @Contract("_,!null->!null;_,null->_")
+        public static Type byName(String name, @Nullable Type defaultType) {
+            Type Type = (Type) valueOf(Type.class, name);
+            return Type != null ? Type : defaultType;
         }
 
     }

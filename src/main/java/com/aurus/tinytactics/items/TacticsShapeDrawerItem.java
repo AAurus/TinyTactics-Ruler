@@ -1,5 +1,6 @@
 package com.aurus.tinytactics.items;
 
+import java.util.List;
 import java.util.function.IntFunction;
 
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
@@ -47,6 +51,10 @@ public class TacticsShapeDrawerItem extends Item {
         World world = context.getWorld();
 
         if (!world.isClient) {
+            if (player.isSneaking()) {
+                incrementMode(stack, false);
+                return ActionResult.SUCCESS;
+            }
             return chooseAction(stack, world, pos, false);
         } else {
             return ActionResult.PASS;
@@ -59,9 +67,21 @@ public class TacticsShapeDrawerItem extends Item {
         ItemStack stack = miner.getStackInHand(Hand.MAIN_HAND);
 
         if (!world.isClient) {
-            chooseAction(stack, world, pos, true);
+            if (player.isSneaking()) {
+                incrementMode(stack, true);
+            } else {
+                chooseAction(stack, world, pos, true);
+            }
         }
         return false;
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        tooltip.add(Text.of(stack.get(DataRegistrar.SHAPE_TYPE).asString()));
+        tooltip.add(Text.translatable(this.getTranslationKey() + ".length", stack.get(DataRegistrar.SHAPE_LENGTH)));
+        tooltip.add(Text.translatable(this.getTranslationKey() + ".diameter", stack.get(DataRegistrar.SHAPE_DIAMETER)));
+        super.appendTooltip(stack, context, tooltip, type);
     }
 
     protected ActionResult chooseAction(ItemStack stack, World world, BlockPos pos, boolean leftClick) {
@@ -70,25 +90,28 @@ public class TacticsShapeDrawerItem extends Item {
                 if (!leftClick) {
                     return startDraw(world, stack, pos);
                 }
+                return this.clearShapes(world, stack.get(DataRegistrar.DYE_COLOR));
             case DRAW_FINISH:
                 if (!leftClick) {
                     return finishDraw(world, stack, pos);
                 } else {
-                    return this.clearShapes(world, stack.get(DataRegistrar.DYE_COLOR));
+                    this.origin = null;
+                    stack.set(DataRegistrar.SHAPE_DRAWER_MODE, Mode.DRAW_START);
+                    return ActionResult.SUCCESS;
                 }
             case SHAPE_DIAMETER:
                 return this.incrementDimension(stack, DataRegistrar.SHAPE_DIAMETER, leftClick);
             case SHAPE_LENGTH:
                 return this.incrementDimension(stack, DataRegistrar.SHAPE_LENGTH, leftClick);
             case SHAPE_TYPE:
-                return this.incrementMode(stack, leftClick);
+                return this.incrementType(stack, leftClick);
             default:
                 return ActionResult.PASS;
         }
     }
 
     protected ActionResult startDraw(World world, ItemStack stack, BlockPos pos) {
-        if (this.player == null || this.origin == null) {
+        if (this.player == null || this.origin != null) {
             return ActionResult.FAIL;
         }
 
@@ -108,28 +131,50 @@ public class TacticsShapeDrawerItem extends Item {
         } else {
             val++;
         }
+        sendMessage(player,
+                Text.translatable(this.getTranslationKey() + ".dimension", type.toString(), val));
         stack.set(type, val);
         return ActionResult.SUCCESS;
     }
 
     protected ActionResult incrementMode(ItemStack stack, boolean negative) {
         TacticsShapeDrawerItem.Mode mode = stack.get(DataRegistrar.SHAPE_DRAWER_MODE);
-        int modesLength = Mode.values().length;
-        int id;
+        int modesLength = TacticsShapeDrawerItem.Mode.values().length;
+        int id = mode.getId();
         if (negative) {
-            id = (mode.getId() - 1 + modesLength) % modesLength;
-            if (id <= Mode.DRAW_FINISH.getId()) {
+            id--;
+            if (id <= TacticsShapeDrawerItem.Mode.DRAW_FINISH.getId() && id >= 0) {
                 id--;
-                id = (id + modesLength) % modesLength;
             }
         } else {
-            id = (mode.getId() + 1) % modesLength;
-            if (id == Mode.DRAW_FINISH.getId()) {
+            id++;
+            if (id == TacticsShapeDrawerItem.Mode.DRAW_FINISH.getId()) {
                 id++;
-                id = (id + modesLength) % modesLength;
             }
         }
-        stack.set(DataRegistrar.SHAPE_DRAWER_MODE, Mode.byId(id));
+        id = (id + modesLength) % modesLength;
+        Mode newMode = Mode.byId(id);
+        sendMessage(player,
+                Text.translatable(this.getTranslationKey() + ".mode", newMode.asString()));
+        stack.set(DataRegistrar.SHAPE_DRAWER_MODE, newMode);
+        return ActionResult.SUCCESS;
+    }
+
+    protected ActionResult incrementType(ItemStack stack, boolean negative) {
+        TacticsShape.Type type = stack.get(DataRegistrar.SHAPE_TYPE);
+        int modesLength = TacticsShape.Type.values().length;
+        int id = type.getId();
+        if (negative) {
+            id--;
+        } else {
+            id++;
+        }
+        id = (id + modesLength) % modesLength;
+        TacticsShape.Type newType = TacticsShape.Type.byId(id);
+
+        sendMessage(player,
+                Text.translatable(this.getTranslationKey() + ".type", newType.asString()));
+        stack.set(DataRegistrar.SHAPE_TYPE, newType);
         return ActionResult.SUCCESS;
     }
 
@@ -144,6 +189,7 @@ public class TacticsShapeDrawerItem extends Item {
         int diameter = stack.get(DataRegistrar.SHAPE_DIAMETER);
 
         sendNewShape(world, color, new TacticsShape(type, origin, pos, length, diameter));
+        this.origin = null;
         stack.set(DataRegistrar.SHAPE_DRAWER_MODE, Mode.DRAW_START);
 
         return ActionResult.SUCCESS;
@@ -153,6 +199,7 @@ public class TacticsShapeDrawerItem extends Item {
         TacticsShapeMap currentShapes = world.getAttachedOrCreate(DataRegistrar.TACTICS_SHAPES,
                 () -> TacticsShapeMap.DEFAULT);
         ServerHandler.setShapes(world, currentShapes.add(player.getUuid(), color, shape.getType(), shape));
+        ServerHandler.broadcastShapeData();
     }
 
     protected ActionResult clearShapes(World world, DyeColor color) {
@@ -165,9 +212,15 @@ public class TacticsShapeDrawerItem extends Item {
                 () -> TacticsShapeMap.DEFAULT);
         ServerHandler.setShapes(world, currentShapes.clearColor(player.getUuid(), color));
 
-        ServerHandler.broadcastRulerData();
+        ServerHandler.broadcastShapeData();
+
+        this.origin = null;
 
         return ActionResult.SUCCESS;
+    }
+
+    private static void sendMessage(PlayerEntity player, Text message) {
+        ((ServerPlayerEntity) player).sendMessageToClient(message, true);
     }
 
     public static enum Mode implements StringIdentifiable {

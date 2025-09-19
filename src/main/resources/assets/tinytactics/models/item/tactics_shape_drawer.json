@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tinytactics:item/tactics_shape_drawer",
+    "layer1": "tinytactics:item/tactics_shape_drawer_overlay"
+  }
+}

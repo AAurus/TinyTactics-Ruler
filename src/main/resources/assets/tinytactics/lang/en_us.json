@@ -1,5 +1,11 @@
 {
-  "item.tinytactics.tactics_ruler": "Tactics Ruler",
-  "itemGroup.tinytactics.group_name": "TinyTactics",
-  "block.tinytactics.actor_marker": "Actor Marker"
+    "itemGroup.tinytactics.group_name": "TinyTactics",
+    "item.tinytactics.tactics_ruler": "Tactics Ruler",
+    "item.tinytactics.tactics_shape_drawer": "Tactics Shape Drawer",
+    "item.tinytactics.tactics_shape_drawer.length": "Length %s",
+    "item.tinytactics.tactics_shape_drawer.diameter": "Diameter %s",
+    "item.tinytactics.tactics_shape_drawer.mode": "Switched mode to %s",
+    "item.tinytactics.tactics_shape_drawer.type": "Switched shape type to %s",
+    "item.tinytactics.tactics_shape_drawer.dimension": "Set %s to %s",
+    "block.tinytactics.actor_marker": "Actor Marker"
 }

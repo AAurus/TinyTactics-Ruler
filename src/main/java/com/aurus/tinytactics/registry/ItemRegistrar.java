@@ -2,6 +2,7 @@ package com.aurus.tinytactics.registry;
 
 import com.aurus.tinytactics.TinyTactics;
 import com.aurus.tinytactics.items.TacticsRulerItem;
+import com.aurus.tinytactics.items.TacticsShapeDrawerItem;
 
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -23,7 +24,9 @@ public class ItemRegistrar {
 
     public static final Item TACTICS_RULER = new TacticsRulerItem();
 
-    public static final Item[] SIMPLE_DYEABLE_ITEMS = { TACTICS_RULER };
+    public static final Item TACTICS_SHAPE_DRAWER = new TacticsShapeDrawerItem();
+
+    public static final Item[] SIMPLE_DYEABLE_ITEMS = { TACTICS_RULER, TACTICS_SHAPE_DRAWER };
 
     public static final ItemGroup TINYTACTICS_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(TACTICS_RULER))
@@ -33,10 +36,12 @@ public class ItemRegistrar {
     public static void registerAll() {
 
         registerItem("tactics_ruler", TACTICS_RULER);
+        registerItem("tactics_shape_drawer", TACTICS_SHAPE_DRAWER);
 
         Registry.register(Registries.ITEM_GROUP, TINYTACTICS_GROUP_KEY, TINYTACTICS_GROUP);
 
-        registerToItemGroup(TINYTACTICS_GROUP_KEY, TACTICS_RULER, BlockRegistrar.ACTOR_MARKER.asItem());
+        registerToItemGroup(TINYTACTICS_GROUP_KEY, TACTICS_RULER, TACTICS_SHAPE_DRAWER,
+                BlockRegistrar.ACTOR_MARKER.asItem());
 
     }
 

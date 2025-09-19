@@ -6,9 +6,15 @@ import java.util.Map;
 
 import org.joml.Quaternionf;
 
+import com.aurus.tinytactics.data.TacticsDrawToolMap;
 import com.aurus.tinytactics.data.TacticsRulerMap;
+import com.aurus.tinytactics.data.TacticsShape;
+import com.aurus.tinytactics.data.TacticsShapeMap;
+import com.aurus.tinytactics.util.Collection;
 import com.aurus.tinytactics.util.ListCollection;
+import com.aurus.tinytactics.util.MapCollection;
 
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -18,7 +24,8 @@ import java.awt.Color;
 
 public class RenderManager {
 
-    private TacticsRulerMap map;
+    private TacticsRulerMap tacticsRulerMap;
+    private TacticsShapeMap tacticsShapeMap;
 
     private static RenderManager manager;
 
@@ -28,8 +35,11 @@ public class RenderManager {
     private static final double CORNER_RULER_LINE_OPACITY = 0.5;
     private static final float CORNER_RULER_LINE_WIDTH = 0.02F;
 
+    private static final double SHAPE_OPACITY = 0.5;
+
     private RenderManager() {
-        map = TacticsRulerMap.DEFAULT;
+        tacticsRulerMap = TacticsRulerMap.DEFAULT;
+        tacticsShapeMap = TacticsShapeMap.DEFAULT;
     }
 
     public static RenderManager getManager() {
@@ -40,33 +50,63 @@ public class RenderManager {
     }
 
     public void init() {
-        WorldRenderEvents.AFTER_ENTITIES.register(context -> {
-            for (Map<DyeColor, ListCollection<BlockPos>> userMap : map.getFullMap().values()) {
-                for (DyeColor color : userMap.keySet()) {
-
-                    List<BlockPos> list = userMap.get(color).getEntries();
-                    List<Vec3d> vecs = blockPosToVec3ds(list);
-
-                    if (vecs.size() >= 2) {
-                        int mainColor = setColorAlpha(color.getEntityColor(), MAIN_RULER_LINE_OPACITY);
-                        LineDrawer.renderQuadCrossLineStrip(context, vecs, mainColor, MAIN_RULER_LINE_WIDTH);
-
-                        Vec3d from = vecs.get(Math.max(vecs.size() - 2, 0));
-                        Vec3d to = vecs.get(Math.max(vecs.size() - 1, 0));
-                        int conerColor = setColorAlpha(mainColor, CORNER_RULER_LINE_OPACITY);
-                        LineDrawer.renderLinesToCorners(context, from, to, conerColor,
-                                CORNER_RULER_LINE_WIDTH);
-                    }
-
-                }
-            }
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
+            renderAllRulerLines(context);
+            renderAllShapes(context);
 
             ConeDrawer.renderDebugCone(context);
         });
     }
 
-    public void updateMap(TacticsRulerMap map) {
-        this.map = map;
+    public void updateRulerMap(TacticsRulerMap map) {
+        this.tacticsRulerMap = map;
+    }
+
+    public void updateShapeMap(TacticsShapeMap map) {
+        this.tacticsShapeMap = map;
+    }
+
+    private <E extends TacticsDrawToolMap<T, C>, T, C extends Collection<T>> void renderAllDrawFeatures(
+            WorldRenderContext context, E map, CollectionConsumer<T> consumer) {
+        for (Map<DyeColor, C> userMap : map.getFullMap().values()) {
+            for (DyeColor color : userMap.keySet()) {
+                consumer.consume(userMap.get(color), color);
+            }
+        }
+    }
+
+    private void renderAllRulerLines(WorldRenderContext context) {
+        renderAllDrawFeatures(context, tacticsRulerMap, (collection, color) -> {
+            List<BlockPos> list = ((ListCollection<BlockPos>) collection).getEntries();
+            List<Vec3d> vecs = blockPosToVec3ds(list);
+
+            if (vecs.size() >= 2) {
+                int mainColor = setColorAlpha(color.getEntityColor(), MAIN_RULER_LINE_OPACITY);
+                LineDrawer.renderQuadCrossLineStrip(context, vecs, mainColor, MAIN_RULER_LINE_WIDTH);
+
+                Vec3d from = vecs.get(Math.max(vecs.size() - 2, 0));
+                Vec3d to = vecs.get(Math.max(vecs.size() - 1, 0));
+                int conerColor = setColorAlpha(mainColor, CORNER_RULER_LINE_OPACITY);
+                LineDrawer.renderLinesToCorners(context, from, to, conerColor,
+                        CORNER_RULER_LINE_WIDTH);
+            }
+        });
+    }
+
+    private void renderAllShapes(WorldRenderContext context) {
+        renderAllDrawFeatures(context, tacticsShapeMap, (collection, color) -> {
+            Map<TacticsShape.Type, TacticsShape> map = ((MapCollection<TacticsShape.Type, TacticsShape>) collection)
+                    .getEntries();
+            TacticsShape cone = map.get(TacticsShape.Type.CONE);
+            if (cone != null) {
+                ConeDrawer.renderCone(context, blockPosToVec3d(cone.getOrigin()), cone.getLength(), cone.getDiameter(),
+                        cone.getDirection(), setColorAlpha(color.getEntityColor(), SHAPE_OPACITY));
+            }
+        });
+    }
+
+    public interface CollectionConsumer<T> {
+        void consume(Collection<T> collection, DyeColor color);
     }
 
     public static List<Vec3d> blockPosToVec3ds(List<BlockPos> blockPos) {

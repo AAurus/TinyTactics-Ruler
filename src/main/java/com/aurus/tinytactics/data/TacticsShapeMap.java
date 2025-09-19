@@ -18,8 +18,8 @@ import net.minecraft.util.Uuids;
 public class TacticsShapeMap extends
         TacticsDrawToolMap<Pair<TacticsShape.Type, TacticsShape>, MapCollection<TacticsShape.Type, TacticsShape>> {
 
-    public static final TacticsShapeMap DEFAULT = new TacticsShapeMap(new HashMap<>());
     public static final MapCollection<TacticsShape.Type, TacticsShape> EMPTY = new MapCollection<>();
+    public static final TacticsShapeMap DEFAULT = new TacticsShapeMap(new HashMap<>());
 
     public static final Codec<TacticsShapeMap> CODEC = RecordCodecBuilder
             .create(instance -> instance

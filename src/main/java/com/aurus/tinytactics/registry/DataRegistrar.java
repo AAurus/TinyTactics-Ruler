@@ -6,6 +6,7 @@ import com.aurus.tinytactics.data.TacticsRulerMap;
 import com.aurus.tinytactics.data.TacticsRulerMapPayload;
 import com.aurus.tinytactics.data.TacticsShape;
 import com.aurus.tinytactics.data.TacticsShapeMap;
+import com.aurus.tinytactics.data.TacticsShapeMapPayload;
 import com.aurus.tinytactics.items.TacticsShapeDrawerItem;
 import com.aurus.tinytactics.recipes.SimpleDyeRecipe;
 import com.mojang.serialization.Codec;
@@ -28,6 +29,7 @@ public class DataRegistrar {
 
     public static void registerAll() {
         PayloadTypeRegistry.playS2C().register(TacticsRulerMapPayload.ID, TacticsRulerMapPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(TacticsShapeMapPayload.ID, TacticsShapeMapPayload.CODEC);
         registerRecipeSubtype(SimpleDyeRecipe.Type.INSTANCE, SimpleDyeRecipe.Serializer.INSTANCE, SimpleDyeRecipe.ID);
     }
 

@@ -97,9 +97,4 @@ public class MapCollection<K, V> extends Collection<Pair<K, V>> {
                 .apply(instance, MapCollection::new));
     }
 
-    public Codec<?> getCodec(Codec<Pair<K, V>> elementCodec) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCodec'");
-    }
-
 }

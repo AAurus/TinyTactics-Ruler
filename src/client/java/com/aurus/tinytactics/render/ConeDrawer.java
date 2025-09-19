@@ -24,6 +24,10 @@ public class ConeDrawer {
         Camera camera = context.camera();
         MatrixStack matrices = Objects.requireNonNull(context.matrixStack());
 
+        if (diameter <= 0) {
+            diameter = 0.5;
+        }
+
         Vec3d endPos = tipPos.add(normal.normalize().multiply(length));
         List<Vec3d> ring = RenderUtils.getRingAround(normal, endPos, diameter);
 

@@ -21,6 +21,13 @@ public abstract class RenderUtils {
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
     }
 
+    public static void resetRenderPreferences() {
+        RenderSystem.enableDepthTest();
+        RenderSystem.enableCull();
+        RenderSystem.disableBlend();
+        RenderSystem.depthMask(true);
+    }
+
     public static List<Vec3d> getRingAround(Vec3d normal, Vec3d centerPos, double diameter) {
         List<Vec3d> result = new ArrayList<>();
         Vec3d norm = normal.normalize();
