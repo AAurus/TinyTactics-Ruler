@@ -53,8 +53,6 @@ public class RenderManager {
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
             renderAllRulerLines(context);
             renderAllShapes(context);
-
-            ConeDrawer.renderDebugCone(context);
         });
     }
 

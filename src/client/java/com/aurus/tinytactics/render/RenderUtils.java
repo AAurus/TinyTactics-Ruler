@@ -47,6 +47,22 @@ public abstract class RenderUtils {
         return result;
     }
 
+    public static List<Vec2d> getSphereData(double diameter) {
+        List<Vec2d> result = new ArrayList<>();
+        int stackEdgeCount = (MIN_HALFRING_EDGE_COUNT + (int) (diameter / RING_EDGE_FACTOR)) * 2;
+
+        Vec2d sinNorm = new Vec2d(1, 0);
+        Vec2d cosNorm = new Vec2d(0, 1);
+
+        for (double i = 0; i < stackEdgeCount; i++) {
+            double sinFac = Math.sin((i / stackEdgeCount) * (2 * Math.PI)) * diameter / 2;
+            double cosFac = Math.cos((i / stackEdgeCount) * (2 * Math.PI)) * diameter / 2;
+            Vec2d sinVec = sinNorm.multiply(sinFac);
+            Vec2d cosVec = cosNorm.multiply(cosFac);
+            result.add(sinVec.add(cosFac));
+        }
+    }
+
     public static Vec3d getQuickPerpendicularNormal(Vec3d vec) {
         if (vec.getX() != 0) {
             return new Vec3d(-vec.getY(), vec.getX(), 0).normalize();
