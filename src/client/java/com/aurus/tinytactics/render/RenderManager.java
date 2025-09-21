@@ -97,8 +97,13 @@ public class RenderManager {
                     .getEntries();
             TacticsShape cone = map.get(TacticsShape.Type.CONE);
             if (cone != null) {
-                ConeDrawer.renderCone(context, blockPosToVec3d(cone.getOrigin()), cone.getLength(), cone.getDiameter(),
+                ShapeDrawer.renderCone(context, blockPosToVec3d(cone.getOrigin()), cone.getLength(), cone.getDiameter(),
                         cone.getDirection(), setColorAlpha(color.getEntityColor(), SHAPE_OPACITY));
+            }
+            TacticsShape sphere = map.get(TacticsShape.Type.SPHERE);
+            if (sphere != null) {
+                ShapeDrawer.renderSphere(context, blockPosToVec3d(sphere.getOrigin()), sphere.getDiameter(),
+                        setColorAlpha(color.getEntityColor(), SHAPE_OPACITY));
             }
         });
     }

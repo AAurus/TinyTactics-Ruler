@@ -47,7 +47,7 @@ public abstract class TacticsDrawToolMap<T, C extends Collection<T>> {
     }
 
     public Map<UUID, Map<DyeColor, C>> mapClearColor(UUID user, DyeColor color) {
-        Map<DyeColor, C> userMap = map.get(user);
+        Map<DyeColor, C> userMap = map.getOrDefault(user, new HashMap<>());
         Map<DyeColor, C> newUserMap = new HashMap<>(userMap);
         newUserMap.put(color, empty);
         Map<UUID, Map<DyeColor, C>> newMap = new HashMap<>(map);

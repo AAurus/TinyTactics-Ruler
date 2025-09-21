@@ -7,11 +7,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec2f;
 
 public abstract class RenderUtils {
 
     public static final double RING_EDGE_FACTOR = 0.5;
     public static final int MIN_HALFRING_EDGE_COUNT = 3;
+    public static final double MIN_DIAMETER = 0.5;
 
     public static void setRenderPreferences() {
         RenderSystem.enableBlend();
@@ -47,20 +49,39 @@ public abstract class RenderUtils {
         return result;
     }
 
-    public static List<Vec2d> getSphereData(double diameter) {
-        List<Vec2d> result = new ArrayList<>();
-        int stackEdgeCount = (MIN_HALFRING_EDGE_COUNT + (int) (diameter / RING_EDGE_FACTOR)) * 2;
+    public static List<Vec3d> getRingAround(Vec3d normal, Vec3d centerPos, double diameter, int ringEdgeCount) {
+        List<Vec3d> result = new ArrayList<>();
+        Vec3d norm = normal.normalize();
 
-        Vec2d sinNorm = new Vec2d(1, 0);
-        Vec2d cosNorm = new Vec2d(0, 1);
+        Vec3d sinNorm = getQuickPerpendicularNormal(norm);
+        Vec3d cosNorm = norm.crossProduct(sinNorm);
 
-        for (double i = 0; i < stackEdgeCount; i++) {
-            double sinFac = Math.sin((i / stackEdgeCount) * (2 * Math.PI)) * diameter / 2;
-            double cosFac = Math.cos((i / stackEdgeCount) * (2 * Math.PI)) * diameter / 2;
-            Vec2d sinVec = sinNorm.multiply(sinFac);
-            Vec2d cosVec = cosNorm.multiply(cosFac);
-            result.add(sinVec.add(cosFac));
+        for (double i = 0; i < ringEdgeCount; i++) {
+            double sinFac = Math.sin((i / ringEdgeCount) * (2 * Math.PI)) * diameter / 2;
+            double cosFac = Math.cos((i / ringEdgeCount) * (2 * Math.PI)) * diameter / 2;
+            Vec3d sinVec = sinNorm.multiply(sinFac);
+            Vec3d cosVec = cosNorm.multiply(cosFac);
+            result.add(centerPos.add(sinVec).add(cosVec));
         }
+
+        return result;
+    }
+
+    public static List<Vec2f> getSphereData(double diameter) {
+        List<Vec2f> result = new ArrayList<>();
+        int ringLayerCount = (MIN_HALFRING_EDGE_COUNT + (int) (diameter / RING_EDGE_FACTOR));
+
+        Vec2f diameterNorm = new Vec2f(1, 0);
+        Vec2f heightNorm = new Vec2f(0, 1);
+
+        for (double i = 1; i < ringLayerCount; i++) {
+            float diameterFac = (float) (Math.sin((i / ringLayerCount) * Math.PI) * diameter);
+            float heightFac = (float) (Math.cos((i / ringLayerCount) * Math.PI) * diameter / 2);
+            Vec2f diameterVec = diameterNorm.multiply(diameterFac);
+            Vec2f heightVec = heightNorm.multiply(heightFac);
+            result.add(diameterVec.add(heightVec));
+        }
+        return result;
     }
 
     public static Vec3d getQuickPerpendicularNormal(Vec3d vec) {
