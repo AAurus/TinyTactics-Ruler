@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.item.SpyglassItem;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.function.ValueLists.OutOfBoundsHandling;
@@ -76,8 +77,7 @@ public class TacticsShape {
     public static enum Type implements StringIdentifiable {
         LINE(0, "line"),
         SPHERE(1, "sphere"),
-        CONE(2, "cone"),
-        CHAIN(3, "chain");
+        CONE(2, "cone");
 
         private int id;
         private String name;

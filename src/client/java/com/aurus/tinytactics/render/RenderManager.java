@@ -95,17 +95,31 @@ public class RenderManager {
         renderAllDrawFeatures(context, tacticsShapeMap, (collection, color) -> {
             Map<TacticsShape.Type, TacticsShape> map = ((MapCollection<TacticsShape.Type, TacticsShape>) collection)
                     .getEntries();
-            TacticsShape cone = map.get(TacticsShape.Type.CONE);
-            if (cone != null) {
+            renderShape(TacticsShape.Type.CONE, map, (cone) -> {
                 ShapeDrawer.renderCone(context, blockPosToVec3d(cone.getOrigin()), cone.getLength(), cone.getDiameter(),
                         cone.getDirection(), setColorAlpha(color.getEntityColor(), SHAPE_OPACITY));
-            }
-            TacticsShape sphere = map.get(TacticsShape.Type.SPHERE);
-            if (sphere != null) {
+            });
+            renderShape(TacticsShape.Type.SPHERE, map, (sphere) -> {
                 ShapeDrawer.renderSphere(context, blockPosToVec3d(sphere.getOrigin()), sphere.getDiameter(),
                         setColorAlpha(color.getEntityColor(), SHAPE_OPACITY));
-            }
+            });
+            renderShape(TacticsShape.Type.LINE, map, (line) -> {
+                ShapeDrawer.renderCylinder(context, blockPosToVec3d(line.getOrigin()), line.getLength(),
+                        line.getDiameter(), line.getDirection(), setColorAlpha(color.getEntityColor(), SHAPE_OPACITY));
+            });
         });
+    }
+
+    private void renderShape(TacticsShape.Type type, Map<TacticsShape.Type, TacticsShape> map,
+            TacticsShapeConsumer consumer) {
+        TacticsShape shape = map.get(type);
+        if (shape != null) {
+            consumer.consume(shape);
+        }
+    }
+
+    public interface TacticsShapeConsumer {
+        void consume(TacticsShape shape);
     }
 
     public interface CollectionConsumer<T> {

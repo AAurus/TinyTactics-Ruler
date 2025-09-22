@@ -32,6 +32,24 @@ public class ShapeDrawer {
         renderBase(camera, matrices, ring, color);
     }
 
+    public static void renderCylinder(WorldRenderContext context, Vec3d basePos, double length, double diameter,
+            Vec3d normal, int color) {
+        Camera camera = context.camera();
+        MatrixStack matrices = Objects.requireNonNull(context.matrixStack());
+
+        if (diameter <= 0) {
+            diameter = RenderUtils.MIN_DIAMETER;
+        }
+
+        Vec3d endPos = basePos.add(normal.normalize().multiply(length));
+        List<Vec3d> baseRing = RenderUtils.getRingAround(normal, basePos, diameter);
+        List<Vec3d> endRing = RenderUtils.getRingAround(normal, endPos, diameter);
+
+        renderBase(camera, matrices, baseRing, color);
+        renderBand(camera, matrices, baseRing, endRing, color);
+        renderBase(camera, matrices, endRing, color);
+    }
+
     public static void renderSphere(WorldRenderContext context, Vec3d centerPos, double diameter, int color) {
 
         Camera camera = context.camera();
