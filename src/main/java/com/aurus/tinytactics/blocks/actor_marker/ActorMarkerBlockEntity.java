@@ -7,9 +7,9 @@ import com.aurus.tinytactics.registry.DataRegistrar;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.ComponentMap;
+import net.minecraft.component.ComponentsAccess;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 
@@ -51,22 +51,24 @@ public class ActorMarkerBlockEntity extends BlockEntity {
         componentMapBuilder.add(DataRegistrar.ACTOR_MARKER_INVENTORY, items);
     }
 
-    @Override
-    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
-        nbt.put("attachments", items.encode(lookup));
-        super.writeNbt(nbt, lookup);
-    }
+    // @Override
+    // protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup
+    // lookup) {
+    // nbt.put("attachments", items.encode(lookup));
+    // super.writeNbt(nbt, lookup);
+    // }
 
-    @Override
-    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
-        super.readNbt(nbt, lookup);
+    // @Override
+    // protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup)
+    // {
+    // super.readNbt(nbt, lookup);
 
-        NbtElement nbtItems = nbt.get("attachments");
-        if (nbtItems != null) {
-            items = ActorMarkerInventory.fromNbt(lookup,
-                    nbtItems).orElse(ActorMarkerInventory.DEFAULT);
-        }
-    }
+    // NbtElement nbtItems = nbt.get("attachments");
+    // if (nbtItems != null) {
+    // items = ActorMarkerInventory.fromNbt(lookup,
+    // nbtItems).orElse(ActorMarkerInventory.DEFAULT);
+    // }
+    // }
 
     @Override
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup lookup) {

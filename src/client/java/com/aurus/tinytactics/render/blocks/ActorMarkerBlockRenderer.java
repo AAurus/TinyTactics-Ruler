@@ -1,5 +1,7 @@
 package com.aurus.tinytactics.render.blocks;
 
+import java.util.ArrayList;
+
 import org.joml.Vector3f;
 
 import com.aurus.tinytactics.blocks.actor_marker.ActorMarkerBlock;
@@ -16,7 +18,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
@@ -24,7 +26,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarkerBlockEntity> {
@@ -33,14 +35,14 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
             new Vector3f(8.0F, 11.0F, 8.0F), new Vector3f(0.5F,
                     0.5F,
                     0.5F),
-            new EulerAngle(0, 0, 0), ModelTransformationMode.HEAD,
+            new EulerAngle(0, 0, 0), ItemDisplayContext.HEAD,
             ActorMarkerInventory.HEAD_KEY);
     private static final ItemAttachmentPosition LEFT_HAND_POSITION = new ItemAttachmentPosition(
             new Vector3f(5.0F, 4.0F, 6.5F),
             new Vector3f(0.5F,
                     0.5F,
                     0.5F),
-            new EulerAngle(40, 20, -90), ModelTransformationMode.THIRD_PERSON_LEFT_HAND,
+            new EulerAngle(40, 20, -90), ItemDisplayContext.THIRD_PERSON_LEFT_HAND,
             ActorMarkerInventory.LEFT_HAND_KEY,
             true, true);
     private static final ItemAttachmentPosition RIGHT_HAND_POSITION = new ItemAttachmentPosition(
@@ -48,7 +50,7 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
             new Vector3f(0.5F,
                     0.5F,
                     0.5F),
-            new EulerAngle(40, -20, 90), ModelTransformationMode.THIRD_PERSON_RIGHT_HAND,
+            new EulerAngle(40, -20, 90), ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
             ActorMarkerInventory.RIGHT_HAND_KEY,
             true);
     private static final ItemAttachmentPosition ATTACHMENT_POSITION = new ItemAttachmentPosition(
@@ -56,7 +58,7 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
             new Vector3f(0.4F,
                     0.4F,
                     0.4F),
-            new EulerAngle(0, 180, 0), ModelTransformationMode.FIXED,
+            new EulerAngle(0, 180, 0), ItemDisplayContext.FIXED,
             ActorMarkerInventory.ATTACHMENT_KEY);
 
     private BlockEntityRendererFactory.Context context;
@@ -66,8 +68,8 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
     }
 
     @Override
-    public void render(ActorMarkerBlockEntity entity, float tickDelta, MatrixStack matrices,
-            VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(ActorMarkerBlockEntity entity, float tickProgress, MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers, int light, int overlay, Vec3d cameraPos) {
         World world = entity.getWorld();
         BlockPos pos = entity.getPos();
         BlockState state = entity.getCachedState();
@@ -82,12 +84,11 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
         rotateToLocal(matrices, state);
 
         MinecraftClient.getInstance().getBlockRenderManager().renderBlock(state, pos, world, matrices,
-                vertexConsumers.getBuffer(RenderLayers.getEntityBlockLayer(state, true)), false,
-                Random.create(0));
+                vertexConsumers.getBuffer(RenderLayers.getEntityBlockLayer(state)), false, new ArrayList<>());
 
         matrices.pop();
 
-        renderItemAttachments(entity, tickDelta, matrices, vertexConsumers, light, overlay);
+        renderItemAttachments(entity, tickProgress, matrices, vertexConsumers, light, overlay);
     }
 
     private void renderName(Text name, ActorMarkerBlockEntity entity, BlockState state, MatrixStack matrices,
@@ -166,9 +167,10 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
         if (attachmentPosition.isHand) {
             attachmentPosition.rotateToHand(matrices);
         }
-        renderer.renderItem(null, item, attachmentPosition.mode, attachmentPosition.leftHanded, matrices,
-                vertexConsumers, world, light, overlay, 0);
+        renderer.renderItem(null, item, attachmentPosition.mode, // attachmentPosition.leftHanded,
+                matrices, vertexConsumers, world, light, overlay, 0);
 
         matrices.pop();
     }
+
 }

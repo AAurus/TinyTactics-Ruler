@@ -3,9 +3,6 @@ package com.aurus.tinytactics.render;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec2f;
 
@@ -16,18 +13,18 @@ public abstract class RenderUtils {
     public static final double MIN_DIAMETER = 0.5;
 
     public static void setRenderPreferences() {
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableCull();
-        RenderSystem.enableDepthTest();
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+        // RenderSystem.enableBlend();
+        // RenderSystem.defaultBlendFunc();
+        // RenderSystem.disableCull();
+        // RenderSystem.enableDepthTest();
+        // RenderSystem.setShader(GameRenderer::getPositionColorProgram);
     }
 
     public static void resetRenderPreferences() {
-        RenderSystem.enableDepthTest();
-        RenderSystem.enableCull();
-        RenderSystem.disableBlend();
-        RenderSystem.depthMask(true);
+        // RenderSystem.enableDepthTest();
+        // RenderSystem.enableCull();
+        // RenderSystem.disableBlend();
+        // RenderSystem.depthMask(true);
     }
 
     public static List<Vec3d> getRingAround(Vec3d normal, Vec3d centerPos, double diameter) {

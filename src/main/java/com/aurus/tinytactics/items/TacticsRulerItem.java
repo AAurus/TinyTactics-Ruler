@@ -1,8 +1,10 @@
 package com.aurus.tinytactics.items;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
@@ -17,8 +19,8 @@ import com.aurus.tinytactics.registry.DataRegistrar;
 public class TacticsRulerItem extends Item {
     PlayerEntity player;
 
-    public TacticsRulerItem() {
-        super(new Item.Settings().maxCount(1).component(DataRegistrar.DYE_COLOR, DyeColor.WHITE));
+    public TacticsRulerItem(Item.Settings settings) {
+        super(settings.maxCount(1).component(DataRegistrar.DYE_COLOR, DyeColor.WHITE));
     }
 
     @Override
@@ -35,7 +37,7 @@ public class TacticsRulerItem extends Item {
     }
 
     @Override
-    public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) {
+    public boolean canMine(ItemStack stack, BlockState state, World world, BlockPos pos, LivingEntity miner) {
         if (!world.isClient) {
             this.clearPoints(world, miner.getStackInHand(Hand.MAIN_HAND).get(DataRegistrar.DYE_COLOR));
         }

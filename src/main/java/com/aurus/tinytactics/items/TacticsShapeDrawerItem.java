@@ -1,6 +1,6 @@
 package com.aurus.tinytactics.items;
 
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +14,8 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.component.ComponentType;
+import net.minecraft.component.type.TooltipDisplayComponent;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,7 +25,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.function.ValueLists.OutOfBoundsHandling;
@@ -34,8 +35,8 @@ public class TacticsShapeDrawerItem extends Item {
     PlayerEntity player;
     BlockPos origin;
 
-    public TacticsShapeDrawerItem() {
-        super(new Settings().maxCount(1)
+    public TacticsShapeDrawerItem(Item.Settings settings) {
+        super(settings.maxCount(1)
                 .component(DataRegistrar.DYE_COLOR, DyeColor.WHITE)
                 .component(DataRegistrar.SHAPE_TYPE, TacticsShape.Type.LINE)
                 .component(DataRegistrar.SHAPE_LENGTH, 0)
@@ -62,9 +63,12 @@ public class TacticsShapeDrawerItem extends Item {
     }
 
     @Override
-    public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) {
-        this.player = miner;
-        ItemStack stack = miner.getStackInHand(Hand.MAIN_HAND);
+    public boolean canMine(ItemStack stack, BlockState state, World world, BlockPos pos, LivingEntity miner) {
+        if (miner instanceof PlayerEntity playerEntity) {
+            this.player = playerEntity;
+        } else {
+            return false;
+        }
 
         if (!world.isClient) {
             if (player.isSneaking()) {
@@ -77,11 +81,15 @@ public class TacticsShapeDrawerItem extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.of(stack.get(DataRegistrar.SHAPE_TYPE).asString()));
-        tooltip.add(Text.translatable(this.getTranslationKey() + ".length", stack.get(DataRegistrar.SHAPE_LENGTH)));
-        tooltip.add(Text.translatable(this.getTranslationKey() + ".diameter", stack.get(DataRegistrar.SHAPE_DIAMETER)));
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent,
+            Consumer<Text> textConsumer, TooltipType type) {
+        textConsumer.accept(Text.of(stack.get(DataRegistrar.SHAPE_TYPE).asString()));
+        textConsumer
+                .accept(Text.translatable(this.getTranslationKey() + ".length", stack.get(DataRegistrar.SHAPE_LENGTH)));
+        textConsumer.accept(
+                Text.translatable(this.getTranslationKey() + ".diameter", stack.get(DataRegistrar.SHAPE_DIAMETER)));
+        super.appendTooltip(stack, context, displayComponent, textConsumer, type);
+        // TODO replace with ComponentTooltipAppenderRegistry
     }
 
     protected ActionResult chooseAction(ItemStack stack, World world, BlockPos pos, boolean leftClick) {
@@ -140,20 +148,20 @@ public class TacticsShapeDrawerItem extends Item {
     protected ActionResult incrementMode(ItemStack stack, boolean negative) {
         TacticsShapeDrawerItem.Mode mode = stack.get(DataRegistrar.SHAPE_DRAWER_MODE);
         int modesLength = TacticsShapeDrawerItem.Mode.values().length;
-        int id = mode.getId();
+        int index = mode.getIndex();
         if (negative) {
-            id--;
-            if (id <= TacticsShapeDrawerItem.Mode.DRAW_FINISH.getId() && id >= 0) {
-                id--;
+            index--;
+            if (index <= TacticsShapeDrawerItem.Mode.DRAW_FINISH.getIndex() && index >= 0) {
+                index--;
             }
         } else {
-            id++;
-            if (id == TacticsShapeDrawerItem.Mode.DRAW_FINISH.getId()) {
-                id++;
+            index++;
+            if (index == TacticsShapeDrawerItem.Mode.DRAW_FINISH.getIndex()) {
+                index++;
             }
         }
-        id = (id + modesLength) % modesLength;
-        Mode newMode = Mode.byId(id);
+        index = (index + modesLength) % modesLength;
+        Mode newMode = Mode.byIndex(index);
         sendMessage(player,
                 Text.translatable(this.getTranslationKey() + ".mode", newMode.asString()));
         stack.set(DataRegistrar.SHAPE_DRAWER_MODE, newMode);
@@ -163,14 +171,14 @@ public class TacticsShapeDrawerItem extends Item {
     protected ActionResult incrementType(ItemStack stack, boolean negative) {
         TacticsShape.Type type = stack.get(DataRegistrar.SHAPE_TYPE);
         int modesLength = TacticsShape.Type.values().length;
-        int id = type.getId();
+        int index = type.getIndex();
         if (negative) {
-            id--;
+            index--;
         } else {
-            id++;
+            index++;
         }
-        id = (id + modesLength) % modesLength;
-        TacticsShape.Type newType = TacticsShape.Type.byId(id);
+        index = (index + modesLength) % modesLength;
+        TacticsShape.Type newType = TacticsShape.Type.byIndex(index);
 
         sendMessage(player,
                 Text.translatable(this.getTranslationKey() + ".type", newType.asString()));
@@ -230,23 +238,24 @@ public class TacticsShapeDrawerItem extends Item {
         SHAPE_LENGTH(3, "shape_length"),
         SHAPE_DIAMETER(4, "shape_diameter");
 
-        private static final IntFunction<Mode> BY_ID = ValueLists.createIdToValueFunction(Mode::getId, values(),
+        private static final IntFunction<Mode> BY_INDEX = ValueLists.createIndexToValueFunction(Mode::getIndex,
+                values(),
                 OutOfBoundsHandling.ZERO);
 
-        public int id;
+        public int index;
         public String name;
 
-        private Mode(int id, String name) {
-            this.id = id;
+        private Mode(int index, String name) {
+            this.index = index;
             this.name = name;
         }
 
-        public int getId() {
-            return this.id;
+        public int getIndex() {
+            return this.index;
         }
 
-        public static Mode byId(int id) {
-            return (Mode) BY_ID.apply(id);
+        public static Mode byIndex(int index) {
+            return (Mode) BY_INDEX.apply(index);
         }
 
         public static final Codec<TacticsShapeDrawerItem.Mode> CODEC = StringIdentifiable

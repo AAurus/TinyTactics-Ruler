@@ -22,14 +22,14 @@ import net.minecraft.screen.CraftingScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.server.world.ServerWorld;
 
 @Mixin(CraftingScreenHandler.class)
 public abstract class CraftingScreenHandlerMixin {
 
     @Inject(method = "updateResult", at = @At("TAIL"))
     private static void injectSimpleDyeSupport(
-            ScreenHandler handler, World world, PlayerEntity player,
+            ScreenHandler handler, ServerWorld world, PlayerEntity player,
             RecipeInputInventory craftingInventory, CraftingResultInventory resultInventory,
             @Nullable RecipeEntry<CraftingRecipe> recipe, CallbackInfo ci) {
         if (world.isClient() || !resultInventory.getStack(0).isEmpty()) {
@@ -51,11 +51,12 @@ public abstract class CraftingScreenHandlerMixin {
             RecipeEntry<SimpleDyeRecipe> recipeEntry = match.get();
             SimpleDyeRecipe matchRecipe = recipeEntry.value();
 
-            if (resultInventory.shouldCraftRecipe(world, serverPlayer, recipeEntry)) {
+            if (resultInventory.shouldCraftRecipe(serverPlayer, recipeEntry)) {
                 ItemStack result = matchRecipe.craft(input, world.getRegistryManager());
                 if (result.isItemEnabled(world.getEnabledFeatures())) {
                     resultInventory.setStack(0, result);
-                    handler.setPreviousTrackedSlot(0, result);
+                    // handler.setPreviousTrackedSlot(0, result); //figure out whatever this did
+                    // later
                     serverPlayer.networkHandler.sendPacket(
                             new ScreenHandlerSlotUpdateS2CPacket(handler.syncId, handler.nextRevision(), 0, result));
                 }

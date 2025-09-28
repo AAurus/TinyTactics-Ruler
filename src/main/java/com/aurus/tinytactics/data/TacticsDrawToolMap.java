@@ -29,6 +29,7 @@ public abstract class TacticsDrawToolMap<T, C extends Collection<T>> {
         return empty;
     }
 
+    @SuppressWarnings("unchecked")
     public Map<UUID, Map<DyeColor, C>> mapAdd(UUID user, DyeColor color, T value) {
         C collection = map.getOrDefault(user, new HashMap<>())
                 .getOrDefault(color, empty);

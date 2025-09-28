@@ -8,14 +8,13 @@ import com.aurus.tinytactics.data.TacticsShapeMapPayload;
 import com.aurus.tinytactics.render.RenderManager;
 import com.aurus.tinytactics.render.blocks.ActorMarkerBlockRenderer;
 import com.aurus.tinytactics.registry.BlockRegistrar;
-import com.aurus.tinytactics.registry.ItemRegistrar;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.BlockRenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.world.ClientWorld;
 
@@ -35,12 +34,13 @@ public class TinyTacticsClient implements ClientModInitializer {
             ServerHandler.broadcastShapeData();
         });
 
-        ColorProviderRegistry.ITEM.register(ColorProviders::getItemColor, ItemRegistrar.SIMPLE_DYEABLE_ITEMS);
+        // ColorProviderRegistry.ITEM.register(ColorProviders::getItemColor,
+        // ItemRegistrar.SIMPLE_DYEABLE_ITEMS);
         ColorProviderRegistry.BLOCK.register(ColorProviders::getBlockEntityColor,
                 BlockRegistrar.SIMPLE_DYEABLE_BLOCKS);
 
         BlockEntityRendererFactories.register(BlockRegistrar.ACTOR_MARKER_BLOCK_ENTITY, ActorMarkerBlockRenderer::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistrar.ACTOR_MARKER, RenderLayer.getTranslucent());
+        BlockRenderLayerMap.putBlock(BlockRegistrar.ACTOR_MARKER, BlockRenderLayer.TRANSLUCENT);
     }
 
     public static void receiveRulerMapPacket(TacticsRulerMapPayload payload, ClientPlayNetworking.Context context) {

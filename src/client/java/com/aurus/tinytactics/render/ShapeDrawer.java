@@ -5,10 +5,10 @@ import java.util.Objects;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
+//import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat.DrawMode;
+import com.mojang.blaze3d.vertex.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Vec2f;
@@ -104,7 +104,7 @@ public class ShapeDrawer {
 
         RenderUtils.setRenderPreferences();
 
-        BufferRenderer.drawWithGlobalProgram(buffer.end());
+        //BufferRenderer.drawWithGlobalProgram(buffer.end());
 
         matrices.pop();
     }
@@ -123,7 +123,7 @@ public class ShapeDrawer {
 
         RenderUtils.setRenderPreferences();
 
-        BufferRenderer.drawWithGlobalProgram(buffer.end());
+        //BufferRenderer.drawWithGlobalProgram(buffer.end());
 
         matrices.pop();
     }
@@ -153,7 +153,7 @@ public class ShapeDrawer {
 
         RenderUtils.setRenderPreferences();
 
-        BufferRenderer.drawWithGlobalProgram(buffer.end());
+        //BufferRenderer.drawWithGlobalProgram(buffer.end());
 
         matrices.pop();
     }

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.item.SpyglassItem;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.function.ValueLists.OutOfBoundsHandling;
@@ -79,25 +78,25 @@ public class TacticsShape {
         SPHERE(1, "sphere"),
         CONE(2, "cone");
 
-        private int id;
+        private int index;
         private String name;
 
-        private static final IntFunction<Type> BY_ID = ValueLists.createIdToValueFunction(Type::getId, values(),
+        private static final IntFunction<Type> BY_INDEX = ValueLists.createIndexToValueFunction(Type::getIndex, values(),
                 OutOfBoundsHandling.ZERO);
 
-        private Type(int id, String name) {
-            this.id = id;
+        private Type(int index, String name) {
+            this.index = index;
             this.name = name;
         }
 
         public static final Codec<TacticsShape.Type> CODEC = StringIdentifiable.createCodec(TacticsShape.Type::values);
 
-        public int getId() {
-            return this.id;
+        public int getIndex() {
+            return this.index;
         }
 
-        public static Type byId(int id) {
-            return (Type) BY_ID.apply(id);
+        public static Type byIndex(int index) {
+            return (Type) BY_INDEX.apply(index);
         }
 
         public String toString() {

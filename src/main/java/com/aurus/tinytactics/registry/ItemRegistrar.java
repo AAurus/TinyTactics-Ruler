@@ -1,5 +1,7 @@
 package com.aurus.tinytactics.registry;
 
+import java.util.function.Function;
+
 import com.aurus.tinytactics.TinyTactics;
 import com.aurus.tinytactics.items.TacticsRulerItem;
 import com.aurus.tinytactics.items.TacticsShapeDrawerItem;
@@ -22,9 +24,10 @@ public class ItemRegistrar {
     public static final RegistryKey<ItemGroup> TINYTACTICS_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),
             Identifier.of(TinyTactics.MOD_ID, "tinytactics_group"));
 
-    public static final Item TACTICS_RULER = new TacticsRulerItem();
+    public static final Item TACTICS_RULER = registerItem("tactics_ruler", TacticsRulerItem::new, new Item.Settings());
 
-    public static final Item TACTICS_SHAPE_DRAWER = new TacticsShapeDrawerItem();
+    public static final Item TACTICS_SHAPE_DRAWER = registerItem("tactics_shape_drawer", TacticsShapeDrawerItem::new,
+            new Item.Settings());
 
     public static final Item[] SIMPLE_DYEABLE_ITEMS = { TACTICS_RULER, TACTICS_SHAPE_DRAWER };
 
@@ -34,10 +37,6 @@ public class ItemRegistrar {
             .build();
 
     public static void registerAll() {
-
-        registerItem("tactics_ruler", TACTICS_RULER);
-        registerItem("tactics_shape_drawer", TACTICS_SHAPE_DRAWER);
-
         Registry.register(Registries.ITEM_GROUP, TINYTACTICS_GROUP_KEY, TINYTACTICS_GROUP);
 
         registerToItemGroup(TINYTACTICS_GROUP_KEY, TACTICS_RULER, TACTICS_SHAPE_DRAWER,
@@ -45,10 +44,10 @@ public class ItemRegistrar {
 
     }
 
-    public static Item registerItem(String name, Item item) {
+    public static Item registerItem(String name, Function<Item.Settings, Item> factory, Item.Settings settings) {
         RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(TinyTactics.MOD_ID, name));
-        Registry.register(Registries.ITEM, itemKey, item);
-        return item;
+        Item item = factory.apply(settings.registryKey(itemKey));
+        return Registry.register(Registries.ITEM, itemKey, item);
     }
 
     public static void registerToItemGroup(RegistryKey<ItemGroup> groupKey, Item... items) {

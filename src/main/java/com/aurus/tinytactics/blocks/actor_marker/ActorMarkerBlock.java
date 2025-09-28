@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.aurus.tinytactics.data.ActorMarkerInventory;
 import com.aurus.tinytactics.data.DyeColorProperty;
-import com.aurus.tinytactics.registry.BlockRegistrar;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.block.Block;
@@ -113,10 +112,12 @@ public class ActorMarkerBlock extends BlockWithEntity {
     }
 
     public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
-        ItemStack itemStack = super.getPickStack(world, pos, state);
-        world.getBlockEntity(pos, BlockRegistrar.ACTOR_MARKER_BLOCK_ENTITY).ifPresent((blockEntity) -> {
-            blockEntity.setStackNbt(itemStack, world.getRegistryManager());
-        });
+        ItemStack itemStack = super.getPickStack(world, pos, state, true);
+        // world.getBlockEntity(pos,
+        // BlockRegistrar.ACTOR_MARKER_BLOCK_ENTITY).ifPresent((blockEntity) -> {
+        // blockEntity.setComponents(itemStack.getComponents()); //(itemStack,
+        // world.getRegistryManager());
+        // });
         return itemStack;
     }
 

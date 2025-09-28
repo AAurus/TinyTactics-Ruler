@@ -2,7 +2,7 @@ package com.aurus.tinytactics.data;
 
 import org.joml.Vector3f;
 
-import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.RotationAxis;
@@ -11,13 +11,13 @@ public class ItemAttachmentPosition {
     public Vector3f position;
     public Vector3f scale;
     public EulerAngle rotation;
-    public ModelTransformationMode mode;
+    public ItemDisplayContext mode;
     public boolean leftHanded = false;
     public boolean isHand = false;
     public String itemKey;
 
     public ItemAttachmentPosition(Vector3f position, Vector3f scale, EulerAngle rotation,
-            ModelTransformationMode mode, String itemKey) {
+            ItemDisplayContext mode, String itemKey) {
         this.position = position;
         this.scale = scale;
         this.rotation = rotation;
@@ -26,7 +26,7 @@ public class ItemAttachmentPosition {
     }
 
     public ItemAttachmentPosition(Vector3f position, Vector3f scale, EulerAngle rotation,
-            ModelTransformationMode mode, String itemKey, boolean isHand) {
+            ItemDisplayContext mode, String itemKey, boolean isHand) {
         this.position = position;
         this.scale = scale;
         this.rotation = rotation;
@@ -36,7 +36,7 @@ public class ItemAttachmentPosition {
     }
 
     public ItemAttachmentPosition(Vector3f position, Vector3f scale, EulerAngle rotation,
-            ModelTransformationMode mode, String itemKey, boolean isHand, boolean leftHanded) {
+            ItemDisplayContext mode, String itemKey, boolean isHand, boolean leftHanded) {
         this.position = position;
         this.scale = scale;
         this.rotation = rotation;
@@ -49,11 +49,11 @@ public class ItemAttachmentPosition {
     public void transformToAttachment(MatrixStack matrices) {
         float[] pos = { position.x() / 16, position.y() / 16, position.z() / 16 };
 
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation.getWrappedYaw()),
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotation.yaw()),
                 pos[0], pos[1], pos[2]);
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rotation.getWrappedPitch()),
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rotation.pitch()),
                 pos[0], pos[1], pos[2]);
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rotation.getWrappedRoll()),
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rotation.roll()),
                 pos[0], pos[1], pos[2]);
 
         matrices.translate(pos[0], pos[1], pos[2]);
