@@ -30,6 +30,7 @@ public class BlockRegistrar {
     public static final Block[] SIMPLE_DYEABLE_BLOCKS = { ACTOR_MARKER };
 
     public static void registerAll() {
+        ACTOR_MARKER_BLOCK_ENTITY.addSupportedBlock(ACTOR_MARKER);
     }
 
     private static Block registerBlock(String name, Function<AbstractBlock.Settings, Block> factory,

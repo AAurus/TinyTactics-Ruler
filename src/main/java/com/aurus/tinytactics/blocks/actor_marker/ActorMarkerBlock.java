@@ -71,10 +71,10 @@ public class ActorMarkerBlock extends BlockWithEntity {
         return OUTLINE_SHAPE;
     }
 
-    @Override
-    protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.INVISIBLE;
-    }
+    // @Override
+    // protected BlockRenderType getRenderType(BlockState state) {
+    // return BlockRenderType.INVISIBLE;
+    // }
 
     protected VoxelShape getCullingShape(BlockState state, BlockView world,
             BlockPos pos) {

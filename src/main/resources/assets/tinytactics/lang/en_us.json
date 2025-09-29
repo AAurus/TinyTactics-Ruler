@@ -7,5 +7,6 @@
     "item.tinytactics.tactics_shape_drawer.mode": "Switched mode to %s",
     "item.tinytactics.tactics_shape_drawer.type": "Switched shape type to %s",
     "item.tinytactics.tactics_shape_drawer.dimension": "Set %s to %s",
+    "item.tinytactics.actor_marker": "Actor Marker",
     "block.tinytactics.actor_marker": "Actor Marker"
 }

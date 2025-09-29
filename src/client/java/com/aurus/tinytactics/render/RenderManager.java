@@ -13,11 +13,13 @@ import com.aurus.tinytactics.data.TacticsShapeMap;
 import com.aurus.tinytactics.util.Collection;
 import com.aurus.tinytactics.util.ListCollection;
 import com.aurus.tinytactics.util.MapCollection;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.util.DyeColor;
 
 import java.awt.Color;
@@ -37,6 +39,8 @@ public class RenderManager {
 
     private static final double SHAPE_OPACITY = 0.5;
 
+    private static final RenderPipeline TACTICS_SHAPES_PIPELINE = RenderPipelines.TRANSLUCENT;
+
     private RenderManager() {
         tacticsRulerMap = TacticsRulerMap.DEFAULT;
         tacticsShapeMap = TacticsShapeMap.DEFAULT;
@@ -52,7 +56,7 @@ public class RenderManager {
     public void init() {
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
             renderAllRulerLines(context);
-            renderAllShapes(context);
+            // renderAllShapes(context);
         });
     }
 
@@ -80,12 +84,12 @@ public class RenderManager {
 
             if (vecs.size() >= 2) {
                 int mainColor = setColorAlpha(color.getEntityColor(), MAIN_RULER_LINE_OPACITY);
-                LineDrawer.renderQuadCrossLineStrip(context, vecs, mainColor, MAIN_RULER_LINE_WIDTH);
+                LineDrawer.getInstance().extractAndDrawLineStrip(context, vecs, mainColor, MAIN_RULER_LINE_WIDTH);
 
                 Vec3d from = vecs.get(Math.max(vecs.size() - 2, 0));
                 Vec3d to = vecs.get(Math.max(vecs.size() - 1, 0));
                 int conerColor = setColorAlpha(mainColor, CORNER_RULER_LINE_OPACITY);
-                LineDrawer.renderLinesToCorners(context, from, to, conerColor,
+                LineDrawer.getInstance().extractAndDrawLinesToCorners(context, from, to, conerColor,
                         CORNER_RULER_LINE_WIDTH);
             }
         });
