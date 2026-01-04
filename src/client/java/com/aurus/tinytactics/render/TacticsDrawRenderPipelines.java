@@ -34,19 +34,19 @@ public class TacticsDrawRenderPipelines {
 
     public static final RenderPipeline TACTICS_LINES = RenderPipelines
             .register(setPreferencesAndBuild(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET),
-                    VertexFormat.DrawMode.QUADS));
+                    "lines", VertexFormat.DrawMode.QUADS));
 
     public static final RenderPipeline TACTICS_CONES = RenderPipelines
             .register(setPreferencesAndBuild(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET),
-                    VertexFormat.DrawMode.TRIANGLE_FAN));
+                    "cones", VertexFormat.DrawMode.TRIANGLE_FAN));
 
     public static final RenderPipeline TACTICS_BANDS = RenderPipelines
             .register(setPreferencesAndBuild(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET),
-                    VertexFormat.DrawMode.TRIANGLE_STRIP));
+                    "bands", VertexFormat.DrawMode.TRIANGLE_STRIP));
 
     private static RenderPipeline setPreferencesAndBuild(RenderPipeline.Builder builder,
-            VertexFormat.DrawMode drawMode) {
-        return builder.withLocation(Identifier.of(TinyTactics.MOD_ID, "pipeline/tactics_drawing"))
+            String id, VertexFormat.DrawMode drawMode) {
+        return builder.withLocation(Identifier.of(TinyTactics.MOD_ID, "pipeline/tactics_drawing/" + id))
                 .withVertexFormat(VertexFormats.POSITION_COLOR, drawMode)
                 .withDepthTestFunction(DepthTestFunction.LESS_DEPTH_TEST)
                 .withBlend(BlendFunction.TRANSLUCENT)

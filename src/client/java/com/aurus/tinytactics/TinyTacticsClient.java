@@ -1,6 +1,7 @@
 package com.aurus.tinytactics;
 
 import com.aurus.tinytactics.data.ColorProviders;
+import com.aurus.tinytactics.data.SimpleDyeTintSource;
 import com.aurus.tinytactics.data.TacticsRulerMap;
 import com.aurus.tinytactics.data.TacticsRulerMapPayload;
 import com.aurus.tinytactics.data.TacticsShapeMap;
@@ -16,7 +17,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.render.BlockRenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.item.tint.TintSourceTypes;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
 
 public class TinyTacticsClient implements ClientModInitializer {
 
@@ -34,8 +37,8 @@ public class TinyTacticsClient implements ClientModInitializer {
             ServerHandler.broadcastShapeData();
         });
 
-        // ColorProviderRegistry.ITEM.register(ColorProviders::getItemColor,
-        // ItemRegistrar.SIMPLE_DYEABLE_ITEMS);
+        TintSourceTypes.ID_MAPPER.put(Identifier.of(TinyTactics.MOD_ID, "simple_dye"),
+                SimpleDyeTintSource.MAP_CODEC);
         ColorProviderRegistry.BLOCK.register(ColorProviders::getBlockEntityColor,
                 BlockRegistrar.SIMPLE_DYEABLE_BLOCKS);
 

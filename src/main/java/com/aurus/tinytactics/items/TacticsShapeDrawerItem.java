@@ -1,5 +1,6 @@
 package com.aurus.tinytactics.items;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -89,7 +91,6 @@ public class TacticsShapeDrawerItem extends Item {
         textConsumer.accept(
                 Text.translatable(this.getTranslationKey() + ".diameter", stack.get(DataRegistrar.SHAPE_DIAMETER)));
         super.appendTooltip(stack, context, displayComponent, textConsumer, type);
-        // TODO replace with ComponentTooltipAppenderRegistry
     }
 
     protected ActionResult chooseAction(ItemStack stack, World world, BlockPos pos, boolean leftClick) {

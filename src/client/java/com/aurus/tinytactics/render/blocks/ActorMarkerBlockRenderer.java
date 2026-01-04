@@ -11,6 +11,7 @@ import com.aurus.tinytactics.data.ItemAttachmentPosition;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.BlockRenderManager;
@@ -73,20 +74,32 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
         BlockPos pos = entity.getPos();
         BlockState state = entity.getCachedState();
 
+        BlockRenderManager renderManager = MinecraftClient.getInstance().getBlockRenderManager();
+
         Text name = entity.getComponents().get(DataComponentTypes.CUSTOM_NAME);
         if (name != null) {
             renderName(name, entity, state, matrices, vertexConsumers, light, overlay);
+        } else {
+            Text parts = Text.of(String.valueOf(renderManager.getModel(state).getParts(null).size()) + " Parts");
+            renderName(parts, entity, state, matrices, vertexConsumers, light, overlay);
         }
 
         matrices.push();
 
         rotateToLocal(matrices, state);
 
-        BlockRenderManager renderManager = MinecraftClient.getInstance().getBlockRenderManager();
+        // renderManager.renderBlock(state, pos, world, matrices,
+        // vertexConsumers.getBuffer(RenderLayers.getEntityBlockLayer(state)), true,
+        // renderManager.getModel(state).getParts(null));
 
-        renderManager.renderBlock(state, pos, world, matrices,
-                vertexConsumers.getBuffer(RenderLayers.getEntityBlockLayer(state)), false,
-                renderManager.getModel(state).getParts(null));
+        renderManager.getModelRenderer().render(world,
+                renderManager.getModel(state).getParts(null), state, pos,
+                matrices,
+                vertexConsumers.getBuffer(RenderLayers.getMovingBlockLayer(state)), false,
+                OverlayTexture.DEFAULT_UV);
+
+        // renderManager.renderBlockAsEntity(state, matrices, vertexConsumers, light,
+        // overlay);
 
         matrices.pop();
 
@@ -98,7 +111,7 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
         matrices.push();
         matrices.translate(0.5, 1.25, 0.5);
 
-        TextRenderer textRenderer = context.getTextRenderer();
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         float width = textRenderer.getWidth(name);
 
@@ -106,13 +119,14 @@ public class ActorMarkerBlockRenderer implements BlockEntityRenderer<ActorMarker
 
         matrices.multiply(MinecraftClient.getInstance().getEntityRenderDispatcher().getRotation());
 
-        matrices.scale(1, -1, -1);
+        matrices.scale(1, -1, 1);
 
-        textRenderer.draw(name, -width / 2, 0, 0xFFFFFF, false,
+        textRenderer.draw(name, -width / 2, 0, 0xFFFFFFFF, false,
                 matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL,
                 (int) (MinecraftClient.getInstance().options.getTextBackgroundOpacity(0.25F)
                         * 255.0F) << 24,
                 light);
+
         matrices.pop();
     }
 

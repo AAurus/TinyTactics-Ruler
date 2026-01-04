@@ -37,7 +37,7 @@ public class RenderManager {
 
     private static final double SHAPE_OPACITY = 0.5;
 
-    private static final RenderPipeline TACTICS_SHAPES_PIPELINE = RenderPipelines.TRANSLUCENT;
+    private static final RenderPipeline TACTICS_SHAPES_PIPELINE = TacticsDrawRenderPipelines.TACTICS_LINES;
 
     private static LineDrawer lineDrawer = LineDrawer.getInstance();
     private static ShapeDrawer shapeDrawer = ShapeDrawer.getInstance();

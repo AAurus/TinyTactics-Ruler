@@ -19,6 +19,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
@@ -44,6 +45,7 @@ public class ActorMarkerBlock extends BlockWithEntity {
 
     public static final IntProperty ROTATION = IntProperty.of("rotation", MIN_ROTATION_INDEX, MAX_ROTATION_INDEX);
     public static final Property<DyeColor> COLOR = DyeColorProperty.of("dye_color");
+    public static final BooleanProperty EDITABLE = BooleanProperty.of("editable");
 
     private static final SoundEvent EQUIP_SOUND = SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value();
     private static final SoundEvent ROTATE_SOUND = SoundEvents.BLOCK_COMPARATOR_CLICK;
@@ -51,9 +53,7 @@ public class ActorMarkerBlock extends BlockWithEntity {
     private static final VoxelShape OUTLINE_SHAPE = Block.createCuboidShape(1.0, 1.0, 1.0, 15.0, 15.0, 15.0);
 
     public ActorMarkerBlock(Settings settings) {
-        super(settings.noCollision().luminance(state -> {
-            return state.get(ROTATION);
-        }));
+        super(settings.noCollision().nonOpaque());
         setDefaultState(getDefaultState().with(ROTATION, 0).with(COLOR, DyeColor.WHITE));
     }
 

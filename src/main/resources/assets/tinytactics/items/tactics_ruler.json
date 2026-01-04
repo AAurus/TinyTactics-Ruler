@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "tinytactics:item/tactics_ruler"
+    "model": "tinytactics:item/tactics_ruler",
+    "tints": [
+        {
+            "type": "tinytactics:simple_dye",
+            "default": 16762992
+        }
+    ]
   }
 }
